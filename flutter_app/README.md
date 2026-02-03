@@ -11,6 +11,9 @@ The production backend URL used by the Angular app is defined in `environment.pr
 ## Environments
 Use production settings (as requested). Avoid committing demo credentials in the repo.
 
+## Skeleton
+Initial architecture scaffolding lives under `lib/` (auth, permissions, POS, sync queue, and core networking). The Flutter app still needs to be created with `flutter create` so the platform projects are generated.
+
 ## Scope
 - Android, iOS, Windows.
 - Hardware: fiscal printers, USB/Bluetooth scanners, camera.
