@@ -1,0 +1,607 @@
+<!-- MODAL PARA LA GESTION DEL PAGO -->
+<div class="modal fade" bsModal #staticModalPagar="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog" style="min-width: 80% !important; display: none">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h4 id="dialog-static-name" class="modal-title pull-left" style="color: aliceblue">
+          Información de pago
+        </h4>
+        <div class="d-flex">
+          <button type="button" class="close" aria-label="Close" (click)="closeModalPagar()">
+            <span aria-hidden="true" style="color: aliceblue">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-secondary" (click)="imprimir()">Imprimir</button>
+        <div #print_ticket id="print_ticket" [ngStyle]="{
+            'max-width': anchoTicket + 'px',
+            'font-size': sizeLetraTicket + 'px'
+          }" style="
+            font-style: normal;
+            line-height: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+          ">
+          <!-- Encabezado -->
+          <table style="width: 100% !important;">
+            <tr style="text-align: center">
+              <td style="width: 10% !important;">
+                <ng-container *ngIf="sucursal?.logo && type != 3">
+                  <img style="width: 210px; height:92px"  src="{{ sucursal?.logo }}" alt="Puvesoft" />
+                </ng-container>
+              </td>
+              <td style="width: 25% !important;">
+                <table style="width: 100%; font-family: 'Arial'">
+                  <tr *ngIf="type != 1">
+                    <td style="text-align: center">
+                      <h4 style="text-align: cente">{{ titleTicket }}</h4>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td style="text-align: center">
+                      <h3 style="
+                        text-align: center;
+                        margin-bottom: 5px;
+                        font-size: 14px;
+                      ">
+                        {{ sucursal?.nombre }}
+                      </h3>
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3 && sucursal?.business_name">
+                    <td [ngStyle]="{
+                        'font-size': sizeLetraTicket + 'px'
+                      }" style="text-align: center">
+                      <span>{{ sucursal?.business_name }}</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3 && sucursal?.nit">
+                    <td [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="text-align: center">
+                      <span>{{ sucursal?.nit }}<label *ngIf="sucursal?.dv"> - {{sucursal?.dv}}</label></span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3">
+                    <td [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="text-align: center">
+                      <span>{{ sucursal?.direccion }} - {{ sucursal?.telefono }}</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3">
+                    <td [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="text-align: center">
+                      <span>{{ sucursal?.departamento }} -
+                        {{ sucursal?.municipio }}</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3 && sucursal?.regimen">
+                    <td [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="text-transform: capitalize; text-align: center">
+                      Regimen: {{ sucursal?.regimen }}
+                    </td>
+                  </tr>
+                  <tr *ngIf="type != 3 && sucursal?.type_regime_id">
+                    <td [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="text-transform: capitalize; text-align: center">
+                      {{ sucursal?.type_regime_id == 1 ? 'Responsable de IVA' : 'No Responsable de IVA' }}
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td style="width: 25% !important;" valign="top">
+                <qrcode style="width: 45px; text-align: center"
+                  [qrdata]="ticket?.facturaVenta?.cufe ? 'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey='+ticket?.facturaVenta?.cufe : ticket?.facturaVenta?.cod_factura"
+                  [allowEmptyString]="true" [ariaLabel]="'QR Code image with the following content...'"
+                  [cssClass]="'center'" [colorDark]="'#000000ff'" [colorLight]="'#ffffffff'" [elementType]="'svg'"
+                  [errorCorrectionLevel]="'M'" [imageHeight]="60" [imageWidth]="60" [margin]="4" [scale]="1"
+                  [title]="'A custom title attribute'" [width]="150"></qrcode>
+              </td>
+              <td style="width: 35% !important;">
+                <table style="width: 100%; border: 1px solid #ccc;">
+                  <tr style="text-align: center;font-size: 15px;font-family: 'Arial';">
+                    <td><br>
+                      <ng-container *ngIf="ticket?.facturaVenta?.f_electronica == 1">Recibo de ventas</ng-container>
+                      <ng-container *ngIf="ticket?.facturaVenta?.f_electronica == 2">Factura pos
+                        electrónica</ng-container>
+                      <ng-container *ngIf="ticket?.facturaVenta?.f_electronica == 3">Factura electrónica de
+                        ventas</ng-container>
+                      <br><b>{{ticket?.facturaVenta?.cod_factura}}</b><br><br>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Información del cliente y fecha de factura -->
+          <table cellpadding="0" cellspacing="0" [ngStyle]="{
+            'font-size': sizeLetraTicket + 'px',
+            'width': '100%',
+            'margin-top': '15px',
+            'font-family': 'Arial',
+            
+          }">
+            <tr>
+              <td style="width: 70% !important;">
+                <table [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="width: 91%; border-collapse: collapse;
+                border: 1px solid #ccc;">
+                  <tr style="height: 28px;">
+                    <td colspan="4"
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                      Información del cliente</td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;">&nbsp;Nombre</td>
+                    <td style="border: 1px solid #ccc;" colspan="3">&nbsp;{{ ticket?.cliente?.nombre }}</td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;width: 25% !important;">
+                      &nbsp;Nit</td>
+                    <td style="border: 1px solid #ccc;width: 25% !important;;">&nbsp;{{ ticket?.cliente?.documento
+                      }}<label *ngIf="ticket?.cliente?.dv"> - {{ticket?.cliente?.dv}}</label>
+                    </td>
+                    <td
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;width: 25% !important;;">
+                      &nbsp;Teléfono</td>
+                    <td style="border: 1px solid #ccc;width: 25% !important;">&nbsp;{{ ticket?.cliente?.telefono }}</td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;width: 25% !important;">
+                      &nbsp;Dirección</td>
+                    <td style="border: 1px solid #ccc;width: 25% !important;;">&nbsp;{{ ticket?.cliente?.direccion }}
+                    </td>
+                    <td
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;width: 25% !important;;">
+                      &nbsp;E-mail</td>
+                    <td style="border: 1px solid #ccc;width: 25% !important;">&nbsp;{{ ticket?.cliente?.email }}</td>
+                  </tr>
+                </table>
+              </td>
+              <td style="width: 30% !important;text-align: right;">
+                <table [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="width: 100%; border-collapse: collapse;border: 1px solid #ccc;">
+                  <tr style="height: 28px;">
+                    <td colspan="4"
+                      style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                      Fecha y hora
+                      <span style="text-align: center; font-weight: bold">{{ ticket?.facturaVenta.f_electronica == 1 ?
+                        'Recibo' : 'Factura' }}</span>
+                    </td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;">&nbsp;Generación
+                    </td>
+                    <td style="border: 1px solid #ccc; font-size: 13px">&nbsp;{{
+                      ticket?.facturaVenta?.fecha_credito
+
+                      }}</td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;">&nbsp;Expedición
+                    </td>
+                    <td style="border: 1px solid #ccc; font-size: 13px">&nbsp;{{
+                      ticket?.facturaVenta?.fecha_expedicion
+                      }}</td>
+                  </tr>
+                  <tr style="height: 28px;">
+                    <td style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;">&nbsp;Vencimiento
+                    </td>
+                    <td style="border: 1px solid #ccc; font-size: 13px;">&nbsp;{{
+                      ticket?.facturaVenta?.fecha_vencimiento_credito | date : "y-MM-d"
+                      }}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Información del cliente y fecha de factura -->
+          <table cellpadding="0" cellspacing="0" [ngStyle]="{
+            'font-size': sizeLetraTicket + 'px',
+            'width': '100%',
+            'margin-top': '15px',
+            'font-family': 'Arial',
+            
+          }">
+            <tr style="height: 28px;">
+              <td
+                style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;width: 13%">
+                Caja</td>
+              <td style="border: 1px solid #ccc;">&nbsp;
+                {{ ticket?.usuario_caja?.nombre }}</td>
+          </table>
+          <!--  <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Atendió:</span>
+                <span>{{ ticket?.atendio?.nombre }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="ticket?.mesa">
+              <td>
+                <span style="text-align: center; font-weight: bold">Mesa:</span>
+                <span>{{ ticket?.mesa?.nombre }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="type != 3 && ticket?.domicilio?.direccion">
+              <td>
+                <span style="text-align: center; font-weight: bold">Dir domicilio:</span>
+                <span>{{ ticket?.domicilio?.direccion }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="type != 3 && ticket?.domicilio?.telefono">
+              <td>
+                <span style="text-align: center; font-weight: bold">Tel domicilio:</span>
+                <span>{{ ticket?.domicilio?.telefono }}</span>
+              </td>
+            </tr>
+          </table> -->
+
+          <table cellpadding="0" cellspacing="0" [ngStyle]="{
+            'font-size': sizeLetraTicket + 'px',
+            'width': '100%',
+            'margin-top': '15px',
+            'font-family': 'Arial',
+          }">
+            <thead>
+              <tr style="height: 28px;">
+                <th style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Item
+                </th>
+                <th style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Cod. barra</th>
+                <th style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Nombre producto</th>
+                <th style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Cantidad</th>
+                <th style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Und. <br>Medida</th>
+                <th *ngIf="canShowTotals"
+                  style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Vr.<br>
+                  Unitario</th>
+                <th *ngIf="canShowTotals"
+                  style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;"
+                  [ngStyle]="{
+                    'font-size': sizeLetraTicket - 2 + 'px'
+                  }">
+                  % DESC
+                </th>
+                <th *ngIf="canShowTotals"
+                  style="background-color: #f6f4f4; font-weight: bold;border: 1px solid #ccc;text-align: center;">
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let item of ticket?.facturaVentaDetalle; let i = index;">
+                <ng-container *ngIf="type != 3 || (type == 3 && item.imprimir == 1)">
+                  <tr style="height: 28px;">
+                    <td style="border: 1px solid #ccc;text-align: center;">
+                      {{ i+1 }}
+                    </td>
+                    <td style="border: 1px solid #ccc;padding-left: 5px;">
+                      {{ item?.cod_barra }}
+                    </td>
+                    <td style="border: 1px solid #ccc;padding-left: 5px;">
+                      {{ item.nombre }}
+                    </td>
+                    <td style="border: 1px solid #ccc;text-align: right; padding-right: 5px;">
+                      {{ type == 3 ? chooseFormateo(item.num_cocina) : chooseFormateo(item.cantidad) }}
+                    </td>
+                    <td style="border: 1px solid #ccc;text-align: center;">{{ item.sigla }}</td>
+                    <td *ngIf="canShowTotals" style="border: 1px solid #ccc;text-align: right;padding-right: 5px;">
+                      {{ formatearNumber(item.valor_venta) }}
+                    </td>
+                    <td *ngIf="canShowTotals" style="border: 1px solid #ccc;text-align: center;" [ngStyle]="{
+                        'font-size': sizeLetraTicket - 2 + 'px'
+                      }">
+                      {{
+                      formatearNumber(
+                      item.por_des
+                      ? (item.por_des + "").substring(0, 5)
+                      : item.por_des
+                      )
+                      }}%
+                    </td>
+                    <td *ngIf="canShowTotals" style="border: 1px solid #ccc;text-align: right;padding-right: 5px;">
+                      {{ formatearNumber(item.total) }}
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+            <tfoot *ngIf="canShowTotals">
+              <tr style="height: 28px;">
+                <td colspan="5" valign="top">
+                  <table style="width: 100%;">
+                    <tr style="font-size: 12px">
+                      <td valign="top">Total items: {{ticket?.facturaVentaDetalle.length}}</td>
+                      <td valign="top">Total Productos: {{totalProductos}}</td>
+                    </tr>
+                  </table>
+                  <br>
+                  <b>Valor en
+                    letras:</b> {{ticket?.facturaVenta?.total_en_letras}}
+                </td>
+
+                <td colspan="3">
+                  <table [ngStyle]="{
+                    'font-size': sizeLetraTicket + 'px'
+                  }" cellpadding="0" cellspacing="0" style="width: 100%;padding-top: 5px;">
+                    <tr style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;width: 20%;">Subtotal&nbsp;
+                      </td>
+                      <td style="text-align: right;border: 1px solid #ccc;width: 20%;padding-right: 5px;">
+                        {{ moneda }}{{
+                        formatearNumber(
+                        ticket?.subtotal_s_imp - ticket?.facturaVenta?.total_bolsa
+                        )
+                        }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.iva5 > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Iva 5%&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.iva5) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.iva16 > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Iva 16%&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.iva16) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.iva19 > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Iva 19%&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.iva19) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.impuestoConsumo > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">ICO&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.impuestoConsumo) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.impuestoICUI > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">ICUI&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.impuestoICUI) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.facturaVenta?.descuento > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Descuento&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        - {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.descuento_s_imp) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="+(ticket?.facturaVenta?.total_retencion)  > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Total Factura&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber((ticket?.facturaVenta?.subtotal)-(ticket?.facturaVenta?.descuento)) }}
+                      </td>
+                    </tr>
+                    
+                    <tr *ngIf="ticket?.facturaVenta?.total_bolsa > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Imp. bolsas&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.total_bolsa) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.facturaVenta?.propina > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Serv. Voluntario&nbsp;
+                      </td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.propina) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.domicilio" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Domicilio&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.domicilio?.valor) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="+(ticket?.facturaVenta?.total_retencion)  > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Retención&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        - {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.total_retencion) }}
+                      </td>
+                    </tr>
+                    <tr style="height: 28px;">
+                      <th style="text-align: right;font-weight: bold;border: 1px solid #ccc;background-color: #f6f4f4;">
+                        Total&nbsp;</th>
+                      <th style="text-align: right;border: 1px solid #ccc;background-color: #f6f4f4;padding-right: 5px;">{{ moneda }}{{
+                        formatearNumber(total - (ticket?.facturaVenta?.total_retencion ?? 0) ) }}</th>
+                    </tr>
+                    <tr *ngIf="ticket?.facturaVenta?.efectivo > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Efectivo&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.efectivo) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="ticket?.facturaVenta?.cambio > 0" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">Cambio&nbsp;</td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(ticket?.facturaVenta?.cambio) }}
+                      </td>
+                    </tr>
+                    <tr *ngIf="
+                    metodoPagoSelected &&
+                    metodoPagoSelected.id != 1 &&
+                    metodoPagoSelected.id != 10
+                  " style="height: 28px;">
+                      <td style="text-align: right;border: 1px solid #ccc;">
+                        {{ metodoPagoSelected.nombre }}
+                      </td>
+                      <td style="text-align: right;border: 1px solid #ccc;">{{ moneda }}{{ formatearNumber(total) }}</td>
+                    </tr>
+                    <tr *ngFor="let item of ticket?.combinados" style="height: 28px;">
+                      <td style="text-align: right;font-weight: bold;border: 1px solid #ccc;">
+                        {{ item?.nombre }}
+                      </td>
+                      <td style="text-align: right;border: 1px solid #ccc;padding-right: 5px;">
+                        {{ moneda }}{{ formatearNumber(item?.valor) }}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Mostrar solo en ticket de pago -->
+          <br>
+          <div *ngIf="
+              ticket?.facturaVenta?.nota != null &&
+              ticket?.facturaVenta?.estado_id != 2
+            " class="mt-3 mb-3" style="
+              text-align: start;
+              border: 1px solid #ccc;
+              font-family: Arial;
+            ">
+            <p class="m-0" [ngStyle]="{
+                'font-size': sizeLetraTicket + 'px'
+              }">
+              &nbsp; <b>NOTA:</b> {{ ticket?.facturaVenta?.nota }}
+            </p>
+          </div>
+
+          <div *ngIf="ticket?.facturaVenta?.legalStatus == 'REJECTED'" style="
+          -ms-transform: rotate(-35deg);
+          -o-transform: rotate(-35deg);
+          transform: rotate(-35deg);
+          text-align: center;
+          background-color: rgb(255, 255, 255);
+          font-size: 28px;
+          padding-top: 10px;
+          padding-bottom: 10px;
+          margin: auto;
+          margin-top: 70px;
+          margin-bottom: 70px;
+          border: 1px solid rgb(255, 0, 0);
+          width: 230px;
+        ">
+            <span style="
+            border-top: 2px solid 1px solid rgb(255, 0, 0);
+            border-bottom: 1px solid 1px solid rgb(255, 0, 0);
+            font-weight: bolder;
+            color: rgb(255, 0, 0);
+          ">
+              RECHAZADO POR LA DIAN
+            </span>
+          </div>
+
+          <br><br>
+          <div *ngIf="ticket?.facturaVenta?.estado_id == 1 && showPaid" style="
+              -ms-transform: rotate(-35deg);
+              -o-transform: rotate(-35deg);
+              transform: rotate(-35deg);
+              text-align: center;
+              background-color: rgb(255, 255, 255);
+              font-size: 28px;
+              padding-top: 10px;
+              padding-bottom: 10px;
+              margin: auto;
+              margin-top: 70px;
+              margin-bottom: 70px;
+              border: 1px solid black;
+              width: 130px;
+            ">
+            <span style="
+                border-top: 2px solid black;
+                border-bottom: 1px solid black;
+                font-weight: bolder;
+              ">
+              PAGADO
+            </span>
+          </div>
+          <table cellpadding="0" cellspacing="0" style="width: 100%;background-color: #f6f4f4;">
+            <tr style="height: 28px;">
+              <td><br>
+                <div style="
+              text-align: center;
+              margin-top: 8px;
+              font-family: Arial;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+            " *ngIf="ticket?.facturaVenta?.cufe">
+                  <label [ngStyle]="{
+                'font-size': sizeLetraTicket + 'px'
+              }" style="padding: 0 !important; margin: 0 !important">
+
+                    <ng-container *ngIf="ticket?.facturaVenta?.resolucion">
+                      <ng-container *ngIf="ticket?.facturaVenta?.resolucion?.resolucion">Resolución {{ ticket?.facturaVenta?.resolucion?.resolucion
+                        }}</ng-container>
+                      <ng-container *ngIf="ticket?.facturaVenta?.resolucion?.prefijo">
+                        - Prefijo: {{ ticket?.facturaVenta?.resolucion?.prefijo }} del:
+                        {{ ticket?.facturaVenta?.resolucion?.rango_desde }} al:
+                        {{ ticket?.facturaVenta?.resolucion?.rango_hasta }}
+                      </ng-container>
+                      <ng-container *ngIf="ticket?.facturaVenta?.resolucion?.fecha_inicio">
+                        - Vigencia: {{ ticket?.facturaVenta?.resolucion?.fecha_inicio }} hasta:
+                        {{ ticket?.facturaVenta?.resolucion?.fecha_fin }}<br>
+                      </ng-container>
+                    </ng-container>
+
+                    <ng-container *ngIf="ticket?.facturaVenta?.f_electronica == 2">
+                      <label [ngStyle]="{
+                        'font-size': sizeLetraTicket + 'px'
+                      }" style="padding: 0 !important; margin: 0 !important">
+                        CUDE:</label>
+                    </ng-container>
+                    <ng-container *ngIf="ticket?.facturaVenta?.f_electronica == 3">
+                      <label [ngStyle]="{
+                        'font-size': sizeLetraTicket + 'px'
+                      }" style="padding: 0 !important; margin: 0 !important">CUFE:</label>
+                    </ng-container>
+                    <label [ngStyle]="{
+                      'font-size': sizeLetraTicket + 'px'
+                    }" style="padding: 0 !important; margin: 0 !important"> {{ ticket?.facturaVenta?.cufe }}</label>
+                  </label>
+
+                </div><br>
+              </td>
+            </tr>
+          </table>
+          <div *ngIf="type != 3" [ngStyle]="{
+               'font-size': sizeLetraTicket + 'px',
+               'white-space': 'pre-wrap'
+            }" style="text-align: center; font-family: Arial">
+            <p>{{ sucursal?.texto_venta }}</p>
+          </div>
+
+          <div style="text-align: center; margin-top: 8px; font-family: Arial">
+            <p style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              ">
+              Generado por {{ nameSite }}
+            </p>
+            <p style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              ">
+              {{ ticket?.infoRevendedor?.web }} | Cel: {{ ticket?.infoRevendedor?.telefono }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

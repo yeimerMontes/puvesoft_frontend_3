@@ -1,0 +1,297 @@
+<div class="row" *ngIf="loaded || count != 0; else loading">
+  <div class="col-12 mb-2">
+    <!-- <p>{{'menu.blank-page' | translate}}</p> -->
+
+    <div class="modal fade" bsModal #staticModal="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+      role="dialog" aria-labelledby="dialog-static-name">
+      <div class="modal-dialog">
+        <div class="modal-content modal-lx">
+          <div class="modal-header" style="background: #2c539e">
+            <h5 id="dialog-static-name" class="modal-title pull-left" style="color: aliceblue">
+              {{ action }}
+            </h5>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+              <span aria-hidden="true" style="color: aliceblue">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="form" autocomplete="off">
+              <!--  {{ form.value | json }}  -->
+              <div class="row">
+                <div class="form-group col-md-6">
+                  <label for="" style="font-weight: bold">Categoria</label>
+                  <select required class="form-control mb-1 rounded" formControlName="categoria">
+                    <option value="">SELECCIONAR...</option>
+                    <ng-container *ngFor="let item of dataCategoria">
+                      <option *ngIf="item.estado_id == 'ACTIVO'" [value]="item.codigo">
+                        {{ item.nombre }}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label for="" style="font-weight: bold">Proveedor</label>
+                  <select class="form-control mb-1 rounded" formControlName="proveedor">
+                    <option value="">SELECCIONAR...</option>
+                    <ng-container *ngFor="let item of dataProveedor">
+                      <option *ngIf="item.estado_id == 'ACTIVO'" [value]="item.codigo">
+                        {{ item.nombre }}
+                      </option>
+                    </ng-container>
+                  </select>
+                </div>
+
+                <div class="form-group col-md-12">
+                  <label for="" style="font-weight: bold">Metodo de pago</label>
+                  <select class="form-control mb-1 rounded" formControlName="metodo_pago"
+                    (change)="metodoPag($event.target.value)">
+                    <option value="">SELECCIONAR...</option>
+                    <ng-container *ngFor="let item of dataMetodoPagos">
+                      <option *ngIf="item.id != 10 && item.id != 2" [value]="item.id">
+                        {{ item.nombre }}
+                      </option>
+                    </ng-container>
+                  </select>
+                  <div *ngIf="campoEsValido('metodo_pago')" class="alert-danger px-2 rounded"
+                    style="background: rgba(3, 0, 0, 0)">
+                    *El metodo de pago es requerido
+                  </div>
+                </div>
+                <div class="form-group col-md-12">
+                  <label for="" style="font-weight: bold">Descripción</label>
+                  <textarea formControlName="descripcion" placeholder="Escribe la descripción del gasto"
+                    class="form-control rounded" style="font-size: 12px"></textarea>
+
+                  <div *ngIf="campoEsValido('descripcion')" class="alert-danger px-2 rounded"
+                    style="background: rgba(3, 0, 0, 0)">
+                    *La descripción es requerida
+                  </div>
+                </div>
+
+                <div class="form-group col-md-6" style="text-align: center">
+                  <label for="" style="font-weight: bold">Valor</label>
+                  <input class="form-control rounded"
+                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                    onkeyup='if (this.value.length > 12 ) this.value ="1"' style="
+                        font-size: 18px !important;
+                        font-weight: bold;
+                        text-align: center;
+                      " min="0" inputmode="numeric" formControlName="valor"
+                    (keyup)="formatearGasto($event.target.value)" />
+
+                  <div *ngIf="campoEsValido('valor')" class="alert-danger px-2 rounded"
+                    style="background: rgba(3, 0, 0, 0)">
+                    *El valor es requerido
+                  </div>
+                </div>
+
+                <div class="form-group col-md-6" style="text-align: center">
+                  <label for="" style="font-weight: bold">Fecha Aplicación</label>
+                  <input type="date" class="form-control rounded" formControlName="fecha_aplicacion"
+                    style="font-size: 13px" aria-label="Search" aria-describedby="search-addon" />
+
+                </div>
+
+              </div>
+
+              <div class="d-flex justify-content-end align-items-center">
+                <button class="btn btn-primary btn-shadow" [disabled]="lockbutton" (click)="onSubmit()"
+                  style="font-size: 14px">
+                  <span *ngIf="lockbutton" class="spinner-border spinner-border-sm" role="status"
+                    aria-hidden="true"></span>
+                  {{ action1 }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12 col-md-12 mb-4" style="padding: 0px">
+    <div class="row">
+      <div class="col col-sm" style="text-align: center">
+        <H1 class="titulo text-center mb-0">{{ titleModule }}</H1>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-body" style="padding: 15px">
+        <form [formGroup]="search" (ngSubmit)="buscarHistorial()">
+          <div class="row">
+            <!-- <div class="col-md-6">
+              <h5 class="card-title" style="font-weight: 600;">Lista de Gastos</h5>
+            </div> -->
+
+
+            <div class="col-md-2" style="padding-left: 30px">
+              <div class="">
+                <button style="
+                      height: 30px;
+                      margin-top: 5px;
+                      margin-bottom: 10px;
+                      margin-right: 15px;
+                      font-size: 14px;
+                      border-radius: 10px;
+                    " type="button" class="btn btn-primary" (click)="openModal(1)">
+                  Nuevo Gasto Fijo
+                </button>
+              </div>
+            </div>
+            <div class="col-md-2">
+
+              <button *ngIf="this.total > 0 && !showApertura" style="
+                height: 30px;
+                margin-top: 5px;
+                margin-bottom: 10px;
+                margin-right: 15px;
+                font-size: 14px;
+                border-radius: 10px;
+              " type="button" class="btn btn-primary float-right" (click)="aplicarGastosFijos()">
+                Aplicar Gastos
+              </button>
+            </div>
+
+            <div class="float-right col text-right" style="padding-right: 30px;">
+              <div class="col pr-0">
+                <button class="btn btn-primary" (click)="goBack()"
+                  style="min-width: max-content;font-size: 14px; border-radius: 10px;"><i
+                    class="iconsminds-arrow-left-2"></i>Regresar</button>
+              </div>
+            </div>
+          </div>
+          <br />
+        </form>
+
+        <div class="row" *ngIf="showApertura">
+          <app-apertura-caja class="mx-auto" (editEvent)="closeApertura($event)"></app-apertura-caja>
+        </div>
+
+        <div style="display: block; overflow-y: auto">
+          <table class="table table-hover table-striped content-table table-bordered" style="border: 0px">
+            <thead style="background: #e9e9e9">
+              <tr style="color: rgb(44, 44, 44); text-align: center">
+                <th scope="col">Item</th>
+                <th scope="col">Descripción Del Gasto</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Metodo de pago</th>
+                <th scope="col">Fecha Aplicación</th>
+                <th scope="col">Valor</th>
+                <th scope="col">Pagar</th>
+                <th scope="col">Sacar Caja</th>
+                <th scope="col" style="width: 90px">Acción</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="loaded">
+              <ng-container *ngIf="data.length > 0; else nodata">
+                <tr *ngFor="let item of data; let i = index" style="font-weight: 400">
+                  <td scope="row" style="width: 80px; text-align: center">
+                    {{ i + 1 }}
+                  </td>
+                  <td style="width: 22%">
+                    <textarea style="width: 100%; height: 30px" disabled readonly>{{ item.descripcion }}</textarea>
+                  </td>
+
+                  <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                    {{ item.categoria_gasto }}
+                  </td>
+                  <td scope="row" style="font-weight: 400; vertical-align: middle">
+                    {{ item.nombre_proveedor }}
+                  </td>
+
+                  <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      ">
+                    {{ item.metodo_pago }}
+                  </td>
+
+                  <td scope="row" style="
+                                    font-weight: 400;
+                                    vertical-align: middle;
+                                    font-size: 13px;
+                                    text-align: center;
+                                  ">
+                    {{ item.fecha_aplic }}
+                  </td>
+
+                  <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: right;
+                        font-size: 13px;
+                      ">
+                    {{ formatearNumber(item.valor) }}
+                  </td>
+
+                  <td>
+                    <div class="custom-control custom-switch text-center">
+                      <input [disabled]="lockbutton" type="checkbox" class="custom-control-input"
+                        [checked]="item.es_pagar_tmp" (click)="changeActive(item)" [id]="'customSwitch1'+item.id">
+                      <label class="custom-control-label" [for]="'customSwitch1'+item.id"></label>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div *ngIf="item.metodo_pago_id == 1 && item.es_pagar_tmp"
+                      class="custom-control custom-switch text-center">
+                      <input [disabled]="lockbutton" type="checkbox" class="custom-control-input"
+                        [checked]="item.sacar_caja" (click)="changeSacarCaja(item)" [id]="'customSwitchSacar'+item.id">
+                      <label class="custom-control-label" [for]="'customSwitchSacar'+item.id"></label>
+                    </div>
+                  </td>
+
+                  <td style="text-align: center">
+
+                    <button class="btn" style="padding: 0px; height: 20px" (click)="openModal(2, item)">
+                      <i class="bi bi-pencil-square" style="color: #484848"></i>
+                    </button>
+
+                    <button [disabled]="lockbutton" class="btn" style="padding: 0px; height: 20px"
+                      (click)="anular(item)">
+                      <i class="bi bi-trash3" style="color: #af1515"></i>
+                    </button>
+
+                  </td>
+                </tr>
+                <tr style="font-weight: 400; color: #000000; font-weight: bold">
+                  <td scope="row" style="width: 80px; text-align: right; font-size: 14px" colspan="6">
+                    TOTAL GASTOS
+                  </td>
+                  <td scope="row" style="width: 80px; text-align: right; font-size: 14px">
+                    {{ formatearNumber(total) }}
+                  </td>
+                  <td colspan="4"></td>
+                </tr>
+              </ng-container>
+              <ng-template #nodata>
+                <tr>
+                  <td scope="row" colspan="13" class="text-muted" style="vertical-align: middle">
+                    <h4 class="h4-sin">No hay registros</h4>
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+            <tfoot *ngIf="!loaded && count > 0">
+              <tr>
+                <td colspan="10">
+                  <img src="../../../../../assets/logos/Loading-Puvesoft.gif"
+                    style="width: 6rem; margin-left: calc(50% - 3rem)" />
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <img src="../../../../../assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%" />
+</ng-template>

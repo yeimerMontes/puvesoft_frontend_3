@@ -1,0 +1,52 @@
+.columx2 {
+  width: 50px;
+  float: left;
+  padding: 10px 0px 0px 0px;
+  box-sizing: border-box;
+  border-radius: 20px;
+}
+
+.columna {
+  height: 50px;
+  background-color: rgb(255, 255, 255);
+  /*  background-image: url('http://picsum.photos/800/600?image=307'); */
+  background-position: center;
+  background-size: cover;
+  border-radius: 20px;
+}
+
+.columx2 img {
+  width: 50px;
+  margin: auto;
+  border-radius: 20px;
+}
+
+.pleca2 {
+  width: 50px;
+  /* Para bajar la imagen */
+  height: 0px;
+}
+
+.pleca2 img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.columna > img {
+  width: 50px;
+  /* Para ajustar el tamaño de la imagen */
+  height: calc(100% - 3px);
+  object-fit: contain;
+}
+
+/* Para estilizar el scrollign */
+.contenedor {
+  height: 50px;
+  max-width: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  overflow-y: hidden;
+  white-space: nowrap;
+}

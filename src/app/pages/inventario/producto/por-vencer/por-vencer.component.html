@@ -1,0 +1,473 @@
+<!-- Gestion Insumos -->
+<div class="row">
+  <!-- MODAL PARA GENERAR INFORME -->
+  <div
+    class="modal fade"
+    bsModal
+    #staticModal2="bs-modal"
+    [config]="{ backdrop: 'static' }"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-static-name"
+  >
+    <div class="modal-dialog modal-lg2">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 id="dialog-static-name" class="modal-title pull-left">
+            Vista previa del documento.
+          </h6>
+          <button
+            class="rounded"
+            style="
+              border: 0px;
+              margin-left: 28%;
+              padding-left: 10px;
+              padding-right: 15px;
+            "
+            ngxPrint
+            printSectionId="printThis"
+          >
+            <img
+              src="../../../../../assets/logos/pdf.png"
+              tooltip="Exportar a PDF"
+              placement="auto"
+              style="width: 35px; padding-bottom: 5px"
+            />
+            Imprimir o Descargar
+          </button>
+          <button
+            type="button"
+            class="close pull-right"
+            aria-label="Close"
+            (click)="closeModal2()"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="height: 80vh; overflow-y: auto">
+          <!-- 'printThis' is template reference -->
+          <div #printThis id="printThis">
+            <div *ngIf="loaded2">
+              <report-master-tables
+                [data]="dataPdf"
+                [headers]="headers"
+                [title]="titleModule"
+              ></report-master-tables>
+            </div>
+          </div>
+          <ng-template [ngIf]="!loaded2">
+            <div
+              class="spinner-border"
+              style="
+                width: 3rem;
+                height: 3rem;
+                margin-left: 50%;
+                margin-top: 10%;
+              "
+              role="status"
+            >
+              <span class="sr-only">Loading...</span>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIN MODAL PARA GENERAR INFORME -->
+
+  <div class="col-lg-12 col-md-12 mb-4" style="padding: 0px">
+    <div class="row">
+      <div class="col col-sm" style="text-align: center">
+        <H1 class="titulo text-center mb-0">{{ titleModule }}</H1>
+      </div>
+    </div>
+    <div class="row" style="padding-left: 30px">
+      <div class="col">
+        <div class="col">
+          <div
+            class="row float-left"
+            style="padding-right: 30px; text-align: center"
+          >
+            <form [formGroup]="size" style="width: 80px">
+              <span class="text-muted text-small">Por página</span>
+              <select
+                required
+                class="form-control mb-1 rounded"
+                style="height: 27px; padding-bottom: 0px; padding-top: 0px"
+                formControlName="data"
+                (change)="llamar()"
+              >
+                <option *ngFor="let item of selects" [value]="item">
+                  {{ item }}
+                </option>
+              </select>
+            </form>
+          </div>
+        </div>
+
+        <div class="col">
+          <div
+            class="row float-right"
+            style="padding-right: 30px; text-align: center"
+          >
+            <div class="col">
+              <span class="text-muted text-small">Exportar</span>
+              <div class="row">
+                <button
+                  style="
+                    background-color: transparent;
+                    border: 10px;
+                    padding-left: 0px;
+                    padding-right: 0px;
+                  "
+                  (click)="generateExcel()"
+                >
+                  <img
+                    src="../../../../../assets/logos/excel_1.png"
+                    tooltip="Exportar a Excel"
+                    placement="auto"
+                    style="width: 30px; padding-bottom: 5px"
+                  /></button
+                >&nbsp;&nbsp;&nbsp;
+                <button
+                  style="
+                    background-color: transparent;
+                    border: 10px;
+                    padding-left: 0px;
+                    padding-right: 0px;
+                  "
+                  (click)="openModal2()"
+                >
+                  <img
+                    src="../../../../../assets/logos/pdf.png"
+                    tooltip="Exportar a PDF"
+                    placement="auto"
+                    style="width: 30px; padding-bottom: 5px"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding: 15px">
+        <form class="mb-3">
+          <div class="row">
+            <div class="col-md-2 col-6">
+              <label style="font-weight: bold; font-size: 12px"
+                >Tipos de productos</label
+              ><br />
+              <select
+                required
+                class="form-control mb-1 rounded"
+                (change)="searchTypeProduct($event.target.value)"
+              >
+                <ng-container *ngFor="let item of tiposProducto">
+                  <option [value]="item.id">
+                    {{ item.name | uppercase }}
+                  </option>
+                </ng-container>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <div style="display: block; overflow-y: auto">
+          <table
+            class="table table-hover table-striped content-table table-bordered"
+            style="border: 0px"
+          >
+            <thead style="background: #e9e9e9">
+              <tr style="color: rgb(44, 44, 44); text-align: center">
+                <th scope="col">Item</th>
+                <th scope="col">Código de Barra</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Valor de Compra</th>
+                <th scope="col">Valor de Venta</th>
+                <th scope="col">Fecha vencimiento</th>
+                <th scope="col">Días faltantes</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Insumo</th>
+                <th scope="col">Receta<br />Servicio<br />Combo</th>
+                <th scope="col">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="data.length > 0; else nodata">
+                <tr
+                  *ngFor="let item of data; let i = index"
+                  style="font-weight: 400"
+                >
+                  <td scope="row" style="width: 100px; text-align: center">
+                    {{ i + 1 }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    {{ item.cod_barra }}
+                  </td>
+
+                  <td
+                    scope="row"
+                    style="font-weight: 400; vertical-align: middle"
+                  >
+                    {{ item.nombre }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: right;
+                    "
+                  >
+                    {{
+                      formatearNumber(item.stock) +
+                        " " +
+                        (item.medida === null ? "" : item.medida)
+                    }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: right;
+                    "
+                  >
+                    {{ formatearNumber(item.valor_compra) }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: right;
+                    "
+                  >
+                    {{ formatearNumber(item.valor_venta) }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    {{ item.fecha_vencimiento }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    {{ item.dias_faltantes }}
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    <img
+                      *ngIf="item.producto == 1"
+                      style="width: 20px"
+                      src="../../../../../assets/img/bien.gif"
+                    />
+                    <img
+                      *ngIf="item.producto == 0"
+                      style="width: 11px"
+                      src="../../../../../assets/img/delete.png"
+                    />
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    <img
+                      *ngIf="item.insumo == 1"
+                      style="width: 20px"
+                      src="../../../../../assets/img/bien.gif"
+                    />
+                    <img
+                      *ngIf="item.insumo == 0"
+                      style="width: 11px"
+                      src="../../../../../assets/img/delete.png"
+                    />
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                  >
+                    <img
+                      *ngIf="item.combinado == 1"
+                      style="width: 20px"
+                      src="../../../../../assets/img/bien.gif"
+                    />
+                    <img
+                      *ngIf="item.combinado == 0"
+                      style="width: 11px"
+                      src="../../../../../assets/img/delete.png"
+                    />
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                    *ngIf="item.estado_id == '1'"
+                  >
+                    <span
+                      class="badge badge-success"
+                      style="font-size: 80%; background-color: #689975"
+                      >Activo</span
+                    >
+                  </td>
+                  <td
+                    scope="row"
+                    style="
+                      font-weight: 400;
+                      vertical-align: middle;
+                      text-align: center;
+                    "
+                    *ngIf="item.estado_id == '2'"
+                  >
+                    <span
+                      class="badge badge-danger"
+                      style="font-size: 80%; background-color: #df6868"
+                      >Inactivo</span
+                    >
+                  </td>
+                </tr>
+              </ng-container>
+
+              <ng-template #nodata>
+                <tr>
+                  <td
+                    scope="row"
+                    colspan="13"
+                    class="text-muted"
+                    style="vertical-align: middle"
+                  >
+                    <h4 class="h4-sin">No hay registros</h4>
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+        Pagina: {{ (pages | async).length - 2 | json }}
+
+        <nav aria-label="Page navigation example">
+          <ul
+            class="pagination pagination-sm"
+            style="display: flex; justify-content: center"
+          >
+            <li
+              class="pagination-prev page-item ng-star-inserted {{
+                !(pages | async)[0].url ? 'disabled' : ''
+              }}"
+            >
+              <button
+                class="page-link"
+                aria-label="Previous"
+                (click)="before()"
+                [disabled]="!(pages | async)[0].url"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+
+            <li *ngIf="page > 2" class="page-item">
+              <button class="page-link" (click)="getProductos(1)">1</button>
+            </li>
+
+            <li *ngIf="page > 3" class="page-item">
+              <span>...</span>
+            </li>
+
+            <ng-container *ngFor="let item of pages | async; let i = index">
+              <li
+                *ngIf="
+                  i != 0 &&
+                  i != (pages | async).length - 1 &&
+                  i >= page - 1 && i <= page + 1
+                "
+                [classList]="botones(item.active)"
+              >
+                <button
+                  [disabled]="page == i"
+                  class="page-link"
+                  (click)="getProductos(i)"
+                >
+                  {{ i }}
+                </button>
+              </li>
+            </ng-container>
+
+            <li *ngIf="page < last_page - 2" class="page-item">
+              <span>...</span>
+            </li>
+
+            <li *ngIf="page < last_page - 1" class="page-item d-flex">
+              <button class="page-link" (click)="getProductos(last_page)">
+                {{ last_page }}
+              </button>
+            </li>
+
+            <li
+              class="pagination-next page-item ng-star-inserted {{
+                !(pages | async)[(pages | async).length - 1].url
+                  ? 'disabled'
+                  : ''
+              }}"
+            >
+              <button
+                class="page-link"
+                aria-label="Next"
+                (click)="next()"
+                [disabled]="!(pages | async)[(pages | async).length - 1].url"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <img
+    [style]="habilitarProductos"
+    src="./assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%"
+  />
+</ng-template>

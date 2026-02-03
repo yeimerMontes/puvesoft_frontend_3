@@ -1,0 +1,94 @@
+<div class="header" [ngStyle]="{ background: backgroundColor }">
+  <div class="topMenu" [ngStyle]="{ background: backgroundColor }">
+    <div></div>
+    <div style="display: flex; align-items: center; gap: 20px">
+      <!-- Ícono de notificaciones -->
+      <div class="notification-wrapper" (click)="toggleNotificaciones()">
+        <i class="bi bi-bell" style="font-size: 20px; color: white"></i>
+        <span *ngIf="notificacionesNoLeidas > 0" class="badge">{{
+          notificacionesNoLeidas
+        }}</span>
+      </div>
+
+      <!-- Menú usuario -->
+      <ul class="nav" (click)="optionMenu()" style="cursor: pointer">
+        <li>
+          <a [ngStyle]="{ 'background-color': backgroundColor }">
+            <i class="bi bi-person" style="font-size: 25px"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Submenú usuario -->
+<div
+  class="topSubMenu"
+  style="position: absolute"
+  [id]="visible ? 'visibleTrue' : 'visibleFalse'"
+  (mouseleave)="optionMenuQuitar()"
+>
+  <div></div>
+  <ul class="divSubMenu">
+    <li>
+      <a class="a" [ngStyle]="{ 'background-color': backgroundColor }">{{
+        nombreUsuario
+      }}</a>
+    </li>
+    <li>
+      <a
+        class="a"
+        [ngStyle]="{ 'background-color': backgroundColor }"
+        (click)="openModalCambiarPassword()"
+        >Cambiar contraseña</a
+      >
+    </li>
+    <li>
+      <a
+        class="a"
+        [ngStyle]="{ 'background-color': backgroundColor }"
+        (click)="onSignOut()"
+        >Cerrar sesión</a
+      >
+    </li>
+  </ul>
+</div>
+
+<!-- Panel de notificaciones deslizante -->
+<div class="drawer-notificaciones" [class.abierto]="mostrarNotificaciones">
+  <div class="drawer-header">
+    <h5>Notificaciones</h5>
+    <button (click)="cerrarNotificaciones()" class="cerrar-btn">&times;</button>
+  </div>
+
+  <!-- Mostrar loading mientras se cargan las notificaciones -->
+  <ng-container *ngIf="loadingNotificaciones; else listaNotificaciones">
+    <div class="text-center">
+      <img
+        src="./assets/logos/Loading-Puvesoft.gif"
+        style="width: 6rem; height: 6rem; margin-top: 10%"
+      />
+    </div>
+  </ng-container>
+
+  <!-- Lista de notificaciones -->
+  <ng-template #listaNotificaciones>
+    <ul class="drawer-list">
+      <li *ngFor="let n of dataNotificaciones">
+        <div
+          class="contenido-notificacion"
+          [ngClass]="{ 'no-leida': !n.leido }"
+          [innerHTML]="n.contenidoSanitizado"
+        ></div>
+        <b>Fecha:</b> {{n.fecha_creacion}}
+      </li>
+    </ul>
+  </ng-template>
+</div>
+
+<style>
+  ::ng-deep .contenido-notificacion p {
+  margin: 4px 0;
+}
+</style>

@@ -1,0 +1,1265 @@
+<div *ngIf="loaded; else loadingData">
+  <div class="separator mb-2"></div>
+  <div class="row">
+    <!--INICIO MODAL DEVOLUCIÓN-->
+    <form class="col-12" [formGroup]="formDevolver">
+      <div class="modal-content">
+        <div class="modal-header" style="background: #cadcfe">
+          <h5
+            id="dialog-static-name"
+            class="modal-title pull-left"
+            style="color: rgb(0, 0, 0)"
+          >
+            Notas de Ajuste POS Electrónico
+          </h5>
+          <button class="btn btn-primary float-right" (click)="regresar()">Regresar</button>
+        </div>
+        <div class="modal-body">
+          <label style="font-size: 12px; font-weight: bold; color: #2c539e"
+            >Información del cliente</label
+          >
+          <div class="card" style="padding: 15px">
+           <div class="row">
+            <div class="col-md-9">
+              <div class="row">
+                <div class="form-group col-md-3">
+                  <label
+                    style="
+                      font-size: 12px;
+                      font-weight: bold;
+                      display: block;
+                      line-height: 7px;
+                    "
+                    >NOTA CRÉDITO A</label
+                  >
+                  <label style="font-weight: bold; font-size: 12px"
+                    >Cliente:
+                    <b style="color: #2c539e">{{ dataCliente.nombre }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label
+                    style="
+                      font-size: 12px;
+                      font-weight: bold;
+                      display: block;
+                      line-height: 7px;
+                    "
+                    >ENVIAR A</label
+                  >
+                  <label style="font-weight: bold; font-size: 12px"
+                    ><b style="color: #2c539e">{{ dataCliente.email }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label
+                    style="
+                      font-size: 12px;
+                      font-weight: bold;
+                      display: block;
+                      line-height: 7px;
+                    "
+                    >No DE FACTURA</label
+                  >
+                  <label style="font-weight: bold; font-size: 12px"
+                    ><b style="color: #2c539e">{{
+                      dataFactura.cod_factura
+                    }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label style="font-weight: bold; font-size: 12px"
+                    >Cédula de ciudadania:
+                    <b style="color: #2c539e">{{
+                      dataCliente.documento
+                    }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label style="font-weight: bold; font-size: 12px"
+                    >DIR. CIUDAD:
+                    <b style="color: #2c539e">{{
+                      dataCliente.direccion
+                    }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label style="font-weight: bold; font-size: 12px"
+                    >RESPONSABLE:
+                    <b style="color: #2c539e">{{ dataAtendio.nombre }}</b></label
+                  >
+                </div>
+                <div class="form-group col-md-3">
+                  <label style="font-weight: bold; font-size: 12px"
+                    >FECHA FACTURA:
+                    <b style="color: #2c539e">{{
+                      dataFactura.fecha_credito
+                    }}</b></label
+                  >
+                </div>
+              
+              </div>
+            </div>
+            <div class="col-md-3">
+              <table class="table">
+                <tr>
+                  <th>TOTAL FACTURA</th>
+                  <td style="text-align: right;">
+                    <label style="font-weight: bold; font-size: 12px"
+                    >
+                    <b style="color: #2c539e">${{
+                      formatearNumber(dataFactura.total_original)
+                    }}</b></label
+                  >
+                  </td>
+                </tr>
+                <tr>
+                  <th>
+                    NOTAS DE AJUSTES APLICADAS
+                  </th>
+                  <td style="text-align: right;">
+                    <label style="font-weight: bold; font-size: 12px"
+                    >
+                    <b style="color: #2c539e">-${{
+                      formatearNumber(dataFactura.total_notas_aplicadas_creditosPos ?? 0)
+                    }}</b></label
+                  >
+                  </td>
+                </tr>
+                <!-- <tr>
+                  <th>
+                    NOTAS DE DEBITO APLICADAS
+                  </th>
+                  <td>
+                    <label style="font-weight: bold; font-size: 12px"
+                    >
+                    <b style="color: #2c539e">${{
+                      formatearCantidad(dataFactura.total_notas_aplicadas_debitos ?? 0)
+                    }}</b></label
+                  >
+                  </td>
+                </tr> -->
+                <tr *ngIf="(+this.formDevolver.value.total_retencion_actual)">
+                  <th>
+                    RETENCIÓN APLICADA
+                  </th>
+                  <td style="text-align: right;">
+                    <label style="font-weight: bold; font-size: 12px; text-align: right;"
+                    >
+                    <b style="color: #2c539e">${{
+                     formatearNumber(
+                      (+this.formDevolver.value.total_retencion_actual)
+                     )
+                    }}</b></label
+                  >
+                  </td>
+                </tr>
+                <tr *ngIf="!(+this.formDevolver.value.total_retencion_actual)">
+                  <th>
+                    TOTAL
+                  </th>
+                  <td style="text-align: right;">
+                    <label style="font-weight: bold; font-size: 12px"
+                    >
+                    <b style="color: #2c539e">${{
+                     formatearNumber((dataFactura.total_original - (dataFactura.total_notas_aplicadas_creditos ?? 0)) + (dataFactura.total_notas_aplicadas_debitos ?? 0)  )
+                    }}</b></label
+                  >
+                  </td>
+                </tr>
+                <tr *ngIf="(+this.formDevolver.value.total_retencion_actual)">
+                  <th>
+                    TOTAL
+                  </th>
+                  <td style="text-align: right;">
+                    <label style="font-weight: bold; font-size: 12px; text-align: right;"
+                    >
+                    <b  *ngIf="!dataFactura.total_notas_aplicadas_creditos" style="color: #2c539e">${{
+                     formatearNumber((dataFactura.total_original - (dataFactura.total_notas_aplicadas_creditos ?? 0)) + (dataFactura.total_notas_aplicadas_debitos ?? 0) - (+this.formDevolver.value.total_retencion_actual) )
+                    }}</b>
+                    <b  *ngIf="dataFactura.total_notas_aplicadas_creditos" style="color: #2c539e">${{
+                      formatearNumber((dataFactura.total_original - (dataFactura.total_notas_aplicadas_creditos ?? 0)) + (dataFactura.total_notas_aplicadas_debitos ?? 0) )
+                     }}</b>
+                    </label
+                  >
+                  </td>
+                </tr>
+              </table>
+            </div>
+           </div>
+          </div>
+          <div *ngIf="canSendForm"
+            style="background: #e9f7fe"
+            class="alert alert-primary card-alerta"
+            role="alert"
+          >
+            No olvide que la descripción del <b>¿PORQUE LA NOTA CRÉDITO?</b>, es
+            obligatoria.<br />
+            Los productos actuales en la tabla son a los que se le aplicará la
+            <b>¡NOTA CRÉDITO!</b>
+          </div>
+          
+          <label *ngIf="canSendForm" style="font-size: 12px; font-weight: bold; color: #2c539e"
+            >Concepto de corrección de la factura</label
+          >
+          <div *ngIf="canSendForm" class="card" style="padding: 15px">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="">Concepto</label>
+                <select
+                  type="text"
+                  class="form-control rounded"
+                  formControlName="tipo_concepto_anulacion"
+                  (change)="changeConceptoNotaCredito()"
+                >
+                  <option [value]="null" selected disabled>
+                    Seleccione tipo de nota a crédito
+                  </option>
+                  <ng-container
+                    *ngFor="let item of tipoNotaCreditoFacturaElectronica"
+                  >
+                  <option [value]="item.id" *ngIf="
+                  (
+                    (+this.formDevolver.value.total_retencion_actual) && item.id == 2
+                  )
+                  || 
+                  (
+                    !(+this.formDevolver.value.total_retencion_actual)
+                  )
+                  
+                  ">
+                      {{ item.nombre }}
+                    </option>
+                  </ng-container>
+                </select>
+                <span *ngIf="formDevolver.get('tipo_concepto_anulacion').value != null; else conceptoView" class="font-weight-bold">*Requerido</span>
+                <ng-template #conceptoView>
+                  <span class="alert-danger rounded px-2 font-weight-bold">*Requerido</span>
+                </ng-template>
+              </div>
+              <div class="form-group col-md-3">
+                <label for="">Método de pago</label>
+                <select
+                  type="text"
+                  class="form-control rounded"
+                  formControlName="metodo_pago"
+                >
+                  <option [value]="''" selected disabled>
+                    Seleccione método de pago
+                  </option>
+                  <ng-container
+                    *ngFor="let item of dataMetodoPago"
+                  >
+                    <option *ngIf="item.id != 9 && item.id != 10" [value]="item.id">
+                      {{ item.nombre }}
+                    </option>
+                  </ng-container>
+                </select>
+                <span *ngIf="formDevolver.get('metodo_pago').value != ''; else metodoPagoView" class="font-weight-bold">*Requerido</span>
+                <ng-template #metodoPagoView>
+                  <span class="alert-danger rounded px-2 font-weight-bold">*Requerido</span>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+
+         <ng-container *ngIf="canSendForm">
+          <div *ngIf="
+          (
+            formDevolver.get('tipo_concepto_anulacion').value != 2
+                && formDevolver.get('propina_actual').value > 0
+          ) || 
+          (
+            formDevolver.get('tipo_concepto_anulacion').value != 2 
+                && formDevolver.get('domicilio_actual').value > 0
+          )
+          " class="card mt-3" style="padding: 15px;">
+            <h5>
+              <label style="font-size: 12px; font-weight: bold; color: #2c539e">
+                Cargos
+              </label>
+            </h5>
+            <div class="row">
+              
+              <div class="form-group col-md-3" *ngIf="
+                formDevolver.get('tipo_concepto_anulacion').value != 2
+                && !dataFactura.disabled_propina
+              ">
+                <label for="">Servicio Voluntario</label>
+                <br>
+                <div class="custom-control custom-switch" for="propina_movimiento">
+                  <input (change)="changePropina($event)" class="custom-control-input" type="checkbox" id="propina_movimiento" formControlName="is_propina">
+                  <label style="font-weight: bold; margin-bottom: 0px; padding-top: 3px;" class="custom-control-label" for="propina_movimiento" >
+                    Devolver ${{ formatearNumber(formDevolver.get('propina_movimiento').value) }}
+                  </label>
+                </div>
+                <table>
+                  <tr>
+                    <td>Actual</td>
+                    <td style="font-weight: bolder;">${{formatearNumber(formDevolver.value.propina_actual)}}</td>
+                  </tr>
+                </table>
+                
+              </div>
+              <div class="form-group col-md-3" *ngIf="
+                formDevolver.get('tipo_concepto_anulacion').value != 2 
+                && !dataFactura.disabled_domicilio
+              ">
+                <label for="">Domicilio</label>
+                <br>
+                <div class="custom-control custom-switch" for="domicilio_movimiento">
+                  <input (change)="changeDomicilio($event)" class="custom-control-input" type="checkbox" id="domicilio_movimiento" formControlName="is_domicilio">
+                  <label style="font-weight: bold; margin-bottom: 0px; padding-top: 3px;" class="custom-control-label" for="domicilio_movimiento" >
+                    Devolver ${{ formatearNumber(formDevolver.get('domicilio_movimiento').value) }}
+                  </label>
+                </div>
+                <table>
+                  <tr>
+                    <td>Actual</td>
+                    <td style="font-weight: bolder;">${{formatearNumber(formDevolver.value.domicilio_actual)}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+         </ng-container>
+
+          <div class="card mt-3" style="padding: 15px" *ngIf="canSendForm">
+            <h5>
+              <label style="font-size: 12px; font-weight: bold; color: #2c539e">
+                Productos
+              </label>
+            </h5>
+            <div>
+              <div style="display: block; overflow-y: auto">
+                <div>
+                  <div
+                    class="content-table1"
+                  >
+                    <div class="table-responsive">
+                      <table
+                        class="table table-hover table-striped content-table table-bordered"
+                        style="border: 0px; width: 100%"
+                      >
+                        <thead
+                          style="background: #48659d2b; text-align: center"
+                        >
+                          <tr style="color: rgb(44, 44, 44)">
+                            <th class="p-1">Cód Barra</th>
+                            <th class="p-1">Producto</th>
+                            <th class="p-1">Cant</th>
+                            <th class="p-1">Und</th>
+                            <th class="p-1" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 1">Cant Devol</th>
+                            <th class="p-1">Vlr Base</th>
+                            <th class="p-1">Impuestos</th>
+                            <th class="p-1">Vlr Impuesto</th>
+                            <th class="p-1">Valor</th>
+                            <th class="p-1" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 4">Ajuste Valor</th>
+                            <th class="p-1" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 4">Valor Desc</th>
+                            <th class="p-1" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 3">% Desc</th>
+                            <th class="p-1">SubTotal</th>
+                            <th class="p-1" *ngIf="formDevolver.get('tipo_concepto_anulacion').value != 2 && canSendForm">SubTotal Devolver</th>
+                          </tr>
+                        </thead>
+                        <tbody *ngIf="prds.value.length > 0; else nodata">
+                          <ng-container formArrayName="prds">
+                            <ng-container
+                              *ngFor="let item of prds.controls; let i = index"
+                              [formGroupName]="i"
+                            >
+                              <tr
+                                style="
+                                  font-size: 10px;
+                                  color: rgb(0, 0, 0);
+                                  background-color: #ffffff;
+                                "
+                              >
+                                <td class="p-1" style="vertical-align: middle">
+                                  {{ dataProductosFactura[i].cod_barra }}
+                                </td>
+                                <td class="p-1" style="vertical-align: middle">
+                                  {{ item.get("nombre")!.value }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 65px;
+                                    min-width: 65px;
+                                    vertical-align: middle;
+                                    text-align: right;
+                                  "
+                                >
+                                {{
+                                  formatearNumber(item.get('cantidad_actual').value)
+                                }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 65px;
+                                    min-width: 65px;
+                                    vertical-align: middle;
+                                    text-align: center;
+                                  "
+                                >
+                                {{
+                                  item.get('sigla').value
+                                }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 65px;
+                                    min-width: 65px;
+                                    vertical-align: middle;
+                                  "
+                                  *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 1"
+                                >
+                                  <input
+                                    class="form-control text-right"
+                                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                                    onclick='
+                                    validarInput(i)
+                                    '
+                                    onkeyup='
+                                    validarInput(i)
+                                    '
+                                    (change)="changeCantidadDevolver($event, item)"
+                                    (keyup)="changeCantidadDevolver($event, item)"
+                                    (click)="changeCantidadDevolver($event, item)"
+                                    style="
+                                      font-size: 11px;
+                                      text-align: center;
+                                      color: rgb(0, 0, 0);
+                                      height: 30px;
+                                      width: 100%;
+                                    "
+                                    min="0"
+                                    type="number"
+                                    [max]="item.get('cantidad_actual').value"
+                                    formControlName="cantidad_movimiento"
+                                  />
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    vertical-align: middle;
+                                    font-size: 12px;
+                                    text-align: right;
+                                  "
+                                >
+                                  {{
+                                    formatearNumber(item.get('valor_base').value)
+                                  }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    vertical-align: middle;
+                                    font-size: 12px;
+                                    text-align: center;
+                                  "
+                                >
+                                <ng-container *ngFor="let subitem of item.get('impuesto').value">
+                                  {{subitem.nombre}} ({{subitem.porcentaje}}%)<br>
+                                </ng-container>
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    vertical-align: middle;
+                                    font-size: 12px;text-align: right;
+                                  "
+                                >
+                                {{
+                                  formatearNumber(
+                                    item.get("valor_actual_impuesto")!.value
+                                      ? recortarNumber(
+                                          item.get("valor_actual_impuesto")!
+                                            .value + ""
+                                        )
+                                      : item.get("valor_actual_impuesto")!.value
+                                  )
+                                }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 100px;
+                                    min-width: 100px;
+                                    vertical-align: middle;
+                                    text-align: right;
+                                    font-size: 12px;
+                                  "
+                                >
+                                  {{
+                                    item.get('valor_venta_actual').value
+                                  }}
+                                </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 100px;
+                                    min-width: 100px;
+                                    vertical-align: middle;
+                                  "
+                                  *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 4"
+                                >
+                                  <input
+                                    class="form-control text-right"
+                                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                                    onkeyup='if (this.value.length > 12 ) this.value ="1"'
+                                    (keyup)="
+                                      valor_pagar($event, $event.target.value, item, i, this)
+                                    "
+                                    (change)="
+                                      valor_pagar($event, $event.target.value, item, i, this)
+                                    "
+                                    style="
+                                      font-size: 11px;
+                                      text-align: center;
+                                      color: rgb(0, 0, 0);
+                                      height: 30px;
+                                      width: 100%;
+                                    "
+                                    inputmode="numeric"
+                                    [value]="item.get('valor_venta_movimiento').value"
+                                    min="0"
+                                    type="text"
+                                  />
+                                </td>
+                                <td
+                                class="p-1"
+                                style="
+                                  width: 100px;
+                                  min-width: 100px;
+                                  vertical-align: middle;
+                                  text-align: right;
+                                  font-size: 12px;
+                                "
+                                *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 4"
+                              >
+                                {{ formatearNumber(
+                                  (+item.get('valor_venta_actual').value.replaceAll(',', '')) - (+item.get('valor_venta_movimiento').value.replaceAll(',', ''))
+                                ) }}
+                              </td>
+                                <td
+                                  class="p-1"
+                                  style="
+                                    width: 65px;
+                                    min-width: 65px;
+                                    vertical-align: middle;
+                                  "
+                                  *ngIf="formDevolver.get('tipo_concepto_anulacion').value == 3"
+                                >
+                                  <input
+                                    class="form-control text-right"
+                                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                                    onkeyup='if (this.value < 1 || this.value>100) this.value =""'
+                                    (change)="por_des_item(item, $event)"
+                                    (keyup)="por_des_item(item, $event)"
+                                    style="
+                                      font-size: 11px;
+                                      text-align: center;
+                                      color: rgb(0, 0, 0);
+                                      height: 30px;
+                                      width: 100%;
+                                    "
+                                    inputmode="numeric"
+                                    [value]="item.get('por_des_movimiento').value"
+                                    formControlName="por_des_movimiento"
+                                    min="0"
+                                    type="text"
+                                  />
+                                </td>
+                                <td
+                                  class="text-right"
+                                  style="
+                                    width: 120px;
+                                    min-width: 120px;
+                                    font-size: 12px;
+                                    padding-bottom: 0px;
+                                  "
+                                >
+                                  {{ formatearNumber( item.get('subtotal_actual')!.value ) }}
+                                </td>
+                                <td
+                                class="text-right"
+                                style="
+                                  width: 120px;
+                                  min-width: 120px;
+                                  font-size: 12px;
+                                  padding-bottom: 0px;
+                                "
+                                *ngIf="formDevolver.get('tipo_concepto_anulacion').value != 2 && canSendForm"
+                              >
+                              <!-- {{item.get('subtotal_actual')!.value}} -->
+                                {{ formatearNumber(item.get('total_movimiento').value) }}
+                              </td>
+                              </tr>
+                            </ng-container>
+                          </ng-container>
+                        </tbody>
+                        <ng-template #nodata>
+                          <tr>
+                            <td
+                              scope="row"
+                              colspan="9"
+                              class="text-muted"
+                              style="vertical-align: middle; padding: 0"
+                            >
+                              <h4 class="h4-sin" style="font-size: 15px">
+                                Toda la factura ha sido devuelta  o anulada
+                              </h4>
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="canSendForm" class="card mt-3" style="padding: 15px;">
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label for="">Mótivo de nota de crédito</label>
+                <textarea
+                  type="text"
+                  class="form-control rounded border"
+                  formControlName="nota"
+                ></textarea>
+                <span *ngIf="formDevolver.get('nota').value != ''; else motivoNotaCredito" class="font-weight-bold">*Requerido</span>
+                <ng-template #motivoNotaCredito>
+                  <span class="alert-danger rounded px-2 font-weight-bold">*Requerido</span>
+                </ng-template>
+              </div>
+
+              <div class="col-md-6">
+                <table class="table table-bordered" style="color:#000;">
+                  <tbody style="background: white;">
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Subtotal Actual:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber( 
+                            (+this.formDevolver.get('subtotal_actual').value )
+                            - (+this.formDevolver.value.descuento_actual)
+                            - ((+this.formDevolver.value.total_retencion_actual))
+                            ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Impuestos Actuales:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber(
+                            this.formDevolver.value.valor_actual_impuesto
+                          ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well" *ngIf="(+this.formDevolver.value.total_retencion_actual)">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Retención Aplicada:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber(
+                            (+this.formDevolver.value.total_retencion_actual)
+                            ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Cargos Actuales:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber(
+                            (+this.formDevolver.value.domicilio_actual)
+                            + (+this.formDevolver.value.propina_actual)
+                          ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em">
+                        <div class="text-right font-weight-bold">Total Actual:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 16px;" id="total" class="text-success text-right">${{ formatearNumber( 
+                            (+this.formDevolver.get('total_actual').value)
+                            + (+this.formDevolver.value.domicilio_actual)
+                            + (+this.formDevolver.value.propina_actual)
+                            - ((+this.formDevolver.value.total_retencion_actual))
+                            ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Subtotal Movimiento:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success" *ngIf="formDevolver.get('tipo_concepto_anulacion').value != null">${{ formatearNumber( (subTotal - descuento) - impuestoMovimiento - totalRetencion ) }}</b>
+                          <b style="font-size: 14px;" id="total" class="text-success text-right" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == null">
+                            $0
+                          </b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Impuestos Movimiento:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success" *ngIf="formDevolver.get('tipo_concepto_anulacion').value != null">${{ formatearNumber( impuestoMovimiento ) }}</b>
+                          <b style="font-size: 14px;" id="total" class="text-success text-right" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == null">
+                            $0
+                          </b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well" *ngIf="(+this.formDevolver.value.total_retencion_actual)">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Retención Movimiento:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber(
+                            totalRetencion
+                          ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Servicio Voluntario:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="suma_descuento" class="text-success">${{ formatearNumber( (+this.formDevolver.value.propina_movimiento) ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em; width: 70%">
+                        <div class="text-right font-weight-bold">Domicilio:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 14px;" id="suma_descuento" class="text-success">${{ formatearNumber( (+this.formDevolver.value.domicilio_movimiento) ) }}</b>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr class="well">
+                      <td style="padding: 0.35em">
+                        <div class="text-right font-weight-bold">Total Movimiento:</div>
+                      </td>
+                      <td style="padding: 0.35em">
+                        <div class="text-right">
+                          <b style="font-size: 18px;" id="total" class="text-success text-right" *ngIf="formDevolver.get('tipo_concepto_anulacion').value != null">
+                            ${{ formatearNumber( 
+                              (totalPagar - descuento) 
+                              + (+this.formDevolver.value.domicilio_movimiento)
+                              + (+this.formDevolver.value.propina_movimiento)
+                              - totalRetencion
+                              ) }}
+                          </b>
+                          <b style="font-size: 18px;" id="total" class="text-success text-right" *ngIf="formDevolver.get('tipo_concepto_anulacion').value == null">
+                            $0
+                          </b>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div *ngIf="canSendForm">
+              <button *ngIf="!disabled" class="btn btn-primary" [disabled]="!formDevolver.value.tipo_concepto_anulacion" (click)="previsualizar()">Previsualizar</button>
+              <button *ngIf="!disabled; else buttonPagando" class="btn btn-primary float-right" [disabled]="disabled" (click)="devolver()">Enviar</button>
+              <ng-template #buttonPagando>
+                <button class="btn btn-primary float-right" [disabled]="disabled" (click)="devolver()">
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Enviando...
+                </button>
+              </ng-template>
+            </div>
+          </div>
+
+          <div class="card mt-3" style="padding: 15px;">
+            <h5>
+              <label style="font-size: 12px; font-weight: bold; color: #2c539e">
+                Notas/Comentarios de la factura
+              </label>
+            </h5>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card mb-3" *ngFor="let item of dataNotas">
+                  <div class="row" style="padding: 15px;">
+                    <div class="col-md-4">
+                      <p style="margin-bottom: 0; font-size: 16px; font-weight: 600; color: #2c2c2c;">
+                        {{ tipoConcepto(item) }}
+                      </p>
+                      <p style="margin-bottom: 0;">Usuario: {{item.nombre}}</p>
+                      <p style="margin-bottom: 0;">Fecha: {{item.fecha_creacion}}</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                      <p style="margin-bottom: 0; font-size: 16px; font-weight: 600; color: #2c2c2c;">
+                        NOTA {{ item.tipo_nota == 1 ? 'CRÉDITO' : (item.tipo_nota == 2 ? 'DÉBITO' : (item.tipo_nota == 4 ? 'DE AJUSTE' : '')) }}
+                        {{item.prefijo}}{{item.cod_credito}}
+                      </p>
+                      <button (click)="openModalDetalle(item)" class="btn btn-link p-0">Ver Detalles</button>
+                      <!-- <p style="margin-bottom: 0;">Plantilla en nota de ajuste</p> -->
+                    </div>
+                    <div class="col-md-4 text-right">
+                      <p style="margin-bottom: 0;">Estado Legal: 
+
+                        <span *ngIf="item.legalStatus == 'ACCEPTED' || item.legalStatus == 'ACCEPTED_WITH_OBSERVATIONS'" title="Aceptada" class="badge badge-success"
+                          style="font-size: 80%">
+                          {{ item.legalStatus }}</span>
+                        <span *ngIf="
+                            item.legalStatus != 'ACCEPTED' &&
+                            item.legalStatus != 'ACCEPTED_WITH_OBSERVATIONS' &&
+                            item.legalStatus != 'DIAN_MANTENIMIENTO'
+                          " title="Rechazada" class="badge badge-danger" style="font-size: 80%">
+                          {{ item.legalStatus }}</span>
+
+                        <span *ngIf="item.legalStatus == 'DIAN_MANTENIMIENTO'" title="Rechazada"
+                          class="badge badge-warning" style="font-size: 80%">
+                          {{ item.legalStatus }}</span>
+                      </p>
+                      <p style="margin-bottom: 0;">Total: {{ item.tipo_nota == 1 || item.tipo_nota == 4 ? '-' : '' }}{{formatearNumber(item.total_movimiento)}}</p>
+                      <button
+                        class="btn ml-1 mr-1 float-right" style="padding: 0px; height: 20px"
+                        [disabled]="showTicketNotaCredito"
+                        (click)="abrirTicketNotaCredito(item.id)"
+                      >
+                        <i class="bi bi-printer"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #loading>
+        <img
+          src="../../../../../assets/logos/Loading-Puvesoft.gif"
+          style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%"
+        />
+      </ng-template>
+    </form>
+  </div>
+  <!--INICIO MODAL DETALLE NOTA CRÉDITO-->
+  <app-detalle-item-nota-credito *ngIf="showTicket" [id]="idDetalleCredito" (editEvent)="closeModalDetalle($event)"></app-detalle-item-nota-credito>
+  <!--FIN MODAL DETALLE NOTA CRÉDITO-->
+
+  <!-- INICIO TICKET NOTA CRÉDITO -->
+  <app-ticket-nota-credito
+    *ngIf="showTicketNotaCredito"
+    (editEvent)="closeTicketNotaCredito($event)"
+    [id]="idNotaCredito"
+    [isOpenAlways]="false"
+  ></app-ticket-nota-credito>
+  <!-- FIN TICKET NOTA CRÉDITO -->
+
+  <!-- INICIO MODAL PREVISUALIZACIÓN -->
+  <div
+class="modal fade"
+bsModal
+#staticModalDetalle="bs-modal"
+[config]="{ backdrop: 'static' }"
+tabindex="-1"
+role="dialog"
+aria-labelledby="dialog-static-name"
+>
+<div class="modal-dialog modal-lg2">
+  <div class="modal-content">
+    <div class="modal-header oculto-impresion">
+      <h6 id="dialog-static-name" class="modal-title pull-left">
+        Previsualización de la factura después de la nota de crédito
+      </h6>
+      <button
+        type="button"
+        class="close pull-right"
+        aria-label="Close"
+        (click)="closeModalPrevisualizacion()"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" style="height: 80vh; overflow-y: auto">
+      <!-- 'printThis' is template reference -->
+      <div #printThis id="printThis">
+        <div>
+        
+          <label style="font-size: 12px; font-weight: bold; color: #2c539e"
+      >Información del cliente</label
+    >
+    <div class="card" style="padding: 15px">
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label
+            style="
+              font-size: 12px;
+              font-weight: bold;
+              display: block;
+              line-height: 7px;
+            "
+            >NOTA CRÉDITO A</label
+          >
+          <label style="font-weight: bold; font-size: 12px"
+            >Cliente:
+            <b style="color: #2c539e">{{ dataCliente.nombre }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label
+            style="
+              font-size: 12px;
+              font-weight: bold;
+              display: block;
+              line-height: 7px;
+            "
+            >ENVIAR A</label
+          >
+          <label style="font-weight: bold; font-size: 12px"
+            ><b style="color: #2c539e">{{ dataCliente.email }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label
+            style="
+              font-size: 12px;
+              font-weight: bold;
+              display: block;
+              line-height: 7px;
+            "
+            >No DE FACTURA</label
+          >
+          <label style="font-weight: bold; font-size: 12px"
+            ><b style="color: #2c539e">{{
+              dataFactura.cod_factura
+            }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label style="font-weight: bold; font-size: 12px"
+            >Cédula de ciudadania:
+            <b style="color: #2c539e">{{
+              dataCliente.documento
+            }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label style="font-weight: bold; font-size: 12px"
+            >DIR. CIUDAD:
+            <b style="color: #2c539e">{{
+              dataCliente.direccion
+            }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label style="font-weight: bold; font-size: 12px"
+            >RESPONSABLE:
+            <b style="color: #2c539e">{{ dataAtendio.nombre }}</b></label
+          >
+        </div>
+        <div class="form-group col-md-3">
+          <label style="font-weight: bold; font-size: 12px"
+            >FECHA FACTURA:
+            <b style="color: #2c539e">{{
+              dataFactura.fecha_credito
+            }}</b></label
+          >
+        </div>
+      </div>
+
+      <div *ngIf="
+          (
+            formDevolver.get('tipo_concepto_anulacion').value != 2
+                && formDevolver.get('propina_actual').value > 0
+          ) || 
+          (
+            formDevolver.get('tipo_concepto_anulacion').value != 2 
+                && formDevolver.get('domicilio_actual').value > 0
+          )
+          " class="card mt-3" style="padding: 15px;">
+            <h5>
+              <label style="font-size: 12px; font-weight: bold; color: #2c539e">
+                Cargos
+              </label>
+            </h5>
+            <div class="row">
+              
+              <div class="form-group col-md-3" *ngIf="
+                formDevolver.get('tipo_concepto_anulacion').value != 2
+                && !dataFactura.disabled_propina
+              ">
+                <label for="">Servicio Voluntario</label>
+                <br>
+                <table>
+                  <tr>
+                    <td></td>
+                    <td style="font-weight: bolder;">${{formatearNumber(formDevolver.value.propina_actual-formDevolver.value.propina_movimiento)}}</td>
+                  </tr>
+                </table>
+                
+              </div>
+              <div class="form-group col-md-3" *ngIf="
+                formDevolver.get('tipo_concepto_anulacion').value != 2 
+                && !dataFactura.disabled_domicilio
+              ">
+                <label for="">Domicilio</label>
+                <br>
+                <table>
+                  <tr>
+                    <td></td>
+                    <td style="font-weight: bolder;">${{formatearNumber(formDevolver.value.domicilio_actual-formDevolver.value.domicilio_movimiento)}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+    </div>
+        <h5>
+          <label style="font-size: 12px; font-weight: bold; color: #2c539e">
+            Productos
+          </label>
+        </h5>
+        <div>
+          <div style="display: block; overflow-y: auto">
+            <div>
+              <div
+                class="content-table1"
+              >
+                <div class="table-responsive">
+                  <table
+                    class="table table-hover table-striped content-table table-bordered"
+                    style="border: 0px; width: 100%"
+                  >
+                    <thead
+                      style="background: #48659d2b; text-align: center"
+                    >
+                      <tr style="color: rgb(44, 44, 44)">
+                        <th class="p-1">Cód Barra</th>
+                        <th class="p-1">Producto</th>
+                        <th class="p-1">Cant</th>
+                        <th class="p-1">Und</th>
+                        <th class="p-1">Valor Base</th>
+                        <th class="p-1">Vlr Impuesto</th>
+                        <th class="p-1">Valor</th>
+                        <th class="p-1">SubTotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container>
+                        <ng-container
+                          *ngFor="let item of productosFacturaPrevisualizacion; let i = index"
+                        >
+                          <tr
+                            style="
+                              font-size: 10px;
+                              color: rgb(0, 0, 0);
+                              background-color: #ffffff;
+                            "
+                          >
+                            <td class="p-1" style="vertical-align: middle">
+                              {{ item.cod_barra }}
+                            </td>
+                            <td class="p-1" style="vertical-align: middle">
+                              {{ item.nombre }}
+                            </td>
+                            <td
+                              class="p-1"
+                              style="
+                                width: 65px;
+                                min-width: 65px;
+                                vertical-align: middle;
+                                text-align: right;
+                              "
+                            >
+                            {{
+                              item.cantidad_movimiento
+                            }}
+                            </td>
+                            <td
+                                  class="p-1"
+                                  style="
+                                    width: 65px;
+                                    min-width: 65px;
+                                    vertical-align: middle;
+                                    text-align: center;
+                                  "
+                                >
+                                {{
+                                  item.sigla
+                                }}
+                                </td>
+                              <td
+                                class="p-1"
+                                style="
+                                  width: 100px;
+                                  min-width: 100px;
+                                  vertical-align: middle;
+                                  text-align: right;
+                                  font-size: 12px;
+                                "
+                              >
+                                {{ formatearNumber(item.valor_base_movimiento) }}
+                              </td>
+                            <td
+                              class="p-1"
+                              style="
+                                width: 100px;
+                                min-width: 100px;
+                                vertical-align: middle;
+                                text-align: right;
+                                font-size: 12px;
+                              "
+                            >
+                            {{ formatearNumber(item.valor_impuesto/item.cantidad_movimiento) }}
+                          </td>
+                            <td
+                              class="p-1"
+                              style="
+                                width: 100px;
+                                min-width: 100px;
+                                vertical-align: middle;
+                                text-align: right;
+                                font-size: 12px;
+                              "
+                            >
+                              {{ formatearNumber(item.valor_venta_movimiento) }}
+                            </td>
+                            <td
+                              class="text-right"
+                              style="
+                                width: 120px;
+                                min-width: 120px;
+                                font-size: 12px;
+                                padding-bottom: 0px;
+                              "
+                            >
+                              {{ formatearNumber( item.subtotal_movimiento ) }}
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <div class="row col-12">
+                  <div class="form-group col-md-6">
+                    <label for="">Mótivo de nota de crédito</label>
+                    <textarea
+                      type="text"
+                      class="form-control rounded border"
+                    >{{formDevolver.value.nota}}</textarea>
+                  </div>
+
+                  <div class="col-md-6">
+                    <table class="table table-bordered" style="color:#000;">
+                      <tbody style="background: white;">
+                        <tr class="well">
+                          <td style="padding: 0.35em; width: 70%">
+                            <div class="text-right font-weight-bold">Subtotal:</div>
+                          </td>
+                          <td style="padding: 0.35em">
+                            <div class="text-right">
+                              <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber( subtotalPrevisualizacion-impuestoPrevisualizacion ) }}</b>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="well">
+                          <td style="padding: 0.35em; width: 70%">
+                            <div class="text-right font-weight-bold">Impuesto:</div>
+                          </td>
+                          <td style="padding: 0.35em">
+                            <div class="text-right">
+                              <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber( impuestoPrevisualizacion ) }}</b>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="well">
+                          <td style="padding: 0.35em; width: 70%">
+                            <div class="text-right font-weight-bold">Servicio Voluntario:</div>
+                          </td>
+                          <td style="padding: 0.35em">
+                            <div class="text-right">
+                              <b style="font-size: 14px;" id="subt" class="text-success">${{formatearNumber(formDevolver.value.propina_actual-formDevolver.value.propina_movimiento)}}</b>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="well">
+                          <td style="padding: 0.35em; width: 70%">
+                            <div class="text-right font-weight-bold">Domicilio:</div>
+                          </td>
+                          <td style="padding: 0.35em">
+                            <div class="text-right">
+                              <b style="font-size: 14px;" id="subt" class="text-success">${{formatearNumber(formDevolver.value.domicilio_actual-formDevolver.value.domicilio_movimiento)}}</b>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr class="well">
+                          <td style="padding: 0.35em; width: 70%">
+                            <div class="text-right font-weight-bold">Total:</div>
+                          </td>
+                          <td style="padding: 0.35em">
+                            <div class="text-right">
+                              <b style="font-size: 14px;" id="subt" class="text-success">${{ formatearNumber( 
+                                subtotalPrevisualizacion 
+                                + (formDevolver.value.propina_actual-formDevolver.value.propina_movimiento) 
+                                + (formDevolver.value.domicilio_actual-formDevolver.value.domicilio_movimiento)
+                                ) }}</b>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+  <!-- FIN MODAL PREVISUALIZACIÓN -->
+</div>
+
+<ng-template #loadingData>
+  <img
+    src="../../../../../assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%"
+  />
+</ng-template>

@@ -1,0 +1,324 @@
+<div *ngIf="loaded || count != 0; else loading">
+  <div class="separator mb-2"></div>
+  <div class="row">
+    <!-- MODAL PARA GENERAR INFORME -->
+    <div class="modal fade" bsModal #staticModalPdf="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+      role="dialog" aria-labelledby="dialog-static-name">
+      <div class="modal-dialog modal-lg2">
+        <div class="modal-content">
+          <div class="modal-header oculto-impresion">
+            <h6 id="dialog-static-name" class="modal-title pull-left">
+              Vista previa del documento.
+            </h6>
+            <button class="rounded" style="
+                border: 0px;
+                margin-left: 28%;
+                padding-left: 10px;
+                padding-right: 15px;
+              " ngxPrint printSectionId="printThis">
+              <img src="../../../../../assets/logos/pdf.png" tooltip="Exportar a PDF" placement="auto"
+                style="width: 35px; padding-bottom: 5px" />
+              Imprimir o Descargar
+            </button>
+            <button type="button" class="close pull-right" aria-label="Close" (click)="closeModalPdf()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" style="height: 80vh; overflow-y: auto">
+            <!-- 'printThis' is template reference -->
+            <div #printThis id="printThis">
+              <div *ngIf="loaded2; else loadingPdf">
+                <report-master-tables [data]="dataReport" [headers]="headers" [title]="titleModule"
+                  [listadoNominaElectronica]="true" [total]="totales" [fecha_inicial]="fechaInicial"
+                  [fecha_final]="fechaFinal" [hora_inicial]="horaInicial" [hora_final]="horaFinal"
+                  [page]="page"></report-master-tables>
+              </div>
+            </div>
+            <ng-template #loadingPdf>
+              <img src="./assets/logos/Loading-Puvesoft.gif" style="
+                  width: 6rem;
+                  height: 6rem;
+                  margin-left: 50%;
+                  margin-top: 10%;
+                " />
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- FIN MODAL PARA GENERAR INFORME -->
+
+    <!--INICIO MODAL OBSERVACIÓN-->
+    <div class="col-12">
+      <div class="modal fade" bsModal #staticModal3="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+        role="dialog" aria-labelledby="dialog-static-name">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header" style="background: #2c539e">
+              <h4 id="dialog-static-name" class="modal-title pull-left" style="color: aliceblue">
+                Nueva Nómina
+              </h4>
+              <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal3()">
+                <span aria-hidden="true" style="color: aliceblue">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="formNominaElectronica" autocomplete="off">
+                <div class="form-group">
+
+                  <div class="form-group col-md-12">
+                    <label for="inputDep" style="font-weight: 700">Año</label>
+
+                    <select class="form-control mb-1" id="inputDep" formControlName="lectivo" style="height: 27.2px">
+                      <option disabled selected [value]="null">SELECCIONAR.</option>
+                      <option *ngFor="let item of aniosLectivos" [value]="item">
+                        {{ item }}
+                      </option>
+                    </select>
+                  </div>
+
+                  <div class="form-group col-md-12">
+                    <label for="inputDep" style="font-weight: 700">Periodo</label>
+
+                    <select class="form-control mb-1" id="inputDep" formControlName="periodo" style="height: 27.2px">
+                      <option disabled selected [value]="null">SELECCIONAR.</option>
+                      <option *ngFor="let item of mesesAnio" [value]="item.id">
+                        {{ item.name }}
+                      </option>
+                    </select>
+                  </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center">
+                  <button [disabled]="disabled" class="btn btn-primary btn-lg btn-shadow" (click)="observacion()">
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--FIN MODAL OBSERVACIÓN-->
+
+    <div class="col-lg-12 col-md-12 mb-4 oculto-impresion" style="padding: 0px">
+      <div class="row">
+        <div class="col col-sm" style="text-align: center">
+          <H1 class="titulo text-center mb-0">{{ titleModule }}</H1>
+        </div>
+      </div>
+      <div class="row" style="padding-left: 30px">
+        <div class="col">
+          <div class="row float-left" style="padding-right: 30px; text-align: center">
+            <form [formGroup]="size" style="width: 80px">
+              <span class="text-muted text-small">Por página</span>
+              <select required class="form-control mb-1 rounded"
+                style="height: 27px; padding-bottom: 0px; padding-top: 0px" formControlName="data" (change)="llamar()">
+                <option *ngFor="let item of selects" [value]="item">
+                  {{ item }}
+                </option>
+              </select>
+            </form>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="row float-right" style="padding-right: 30px; text-align: center">
+            <div class="col">
+              <span class="text-muted text-small">Exportar</span>
+              <div class="row">
+                <button style="
+                    background-color: transparent;
+                    border: 10px;
+                    padding-left: 0px;
+                    padding-right: 0px;
+                  " (click)="generateExcel()">
+                  <img src="../../../../../assets/logos/excel_1.png" tooltip="Exportar a Excel" placement="auto"
+                    style="width: 30px; padding-bottom: 5px" /></button>&nbsp;&nbsp;&nbsp;
+                <button style="
+                    background-color: transparent;
+                    border: 10px;
+                    padding-left: 0px;
+                    padding-right: 0px;
+                  " (click)="openModalPdf()">
+                  <img src="../../../../../assets/logos/pdf.png" tooltip="Exportar a PDF" placement="auto"
+                    style="width: 30px; padding-bottom: 5px" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding: 15px">
+          <div class="row">
+            <div class="col-12" style="margin-bottom: 20px;">
+              <button style="height: 35px; border-radius: 10px; font-size: 14px" class="btn btn-primary float-right"
+                type="submit" (click)="openModal(null, 3)">
+                Emitir Nueva Nómina
+              </button>
+            </div>
+          </div>
+          <div style="display: block; overflow-y: auto">
+            <table class="table table-hover table-striped content-table table-bordered" style="border: 0px">
+              <thead style="background: #e9e9e9">
+                <tr style="color: rgb(44, 44, 44); text-align: center">
+                  <th scope="col" style="width: 90px;">Item</th>
+                  <th scope="col">Mes</th>
+                  <th scope="col">Año</th>
+                  <th scope="col">Fecha Creación</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Empleados</th>
+                  <th scope="col">Emitidos</th>
+                  <th scope="col">Por Emitir</th>
+                  <th scope="col">Progreso</th>
+                  <th scope="col">Acción</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="loaded">
+                <ng-container *ngIf="data?.length > 0; else nodata">
+                  <tr [ngStyle]="{
+                      'font-weight': 400,
+                      'background-color': background(item.estado_id)
+                    }" *ngFor="let item of data  | paginate
+                      : {
+                          itemsPerPage: size.controls.data.value,
+                          currentPage: page,
+                          totalItems: totalItems
+                        }; let i = index">
+                    <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                        width: 90px;
+                      ">
+                      {{ i + 1 }}
+                    </td>
+                    <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      ">
+                      {{ getMonth(+item.periodo) }}
+                    </td>
+                    <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      ">
+                      {{ item.fecha_creacion|date:'YYYY' }}
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      {{ item.fecha_creacion }}
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      <span class="badge badge-success p-1" style="font-size: 80%" [ngStyle]="{
+                        'background-color': getColorState(item.estado_id)
+                      }">
+                        {{ item.estado_id == 1 ? 'Finalizado' : 'Pendiente' }}</span>
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      {{ item.empleados }}
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      {{ item.emitidos }}
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      {{ item.por_emitir }}
+                    </td>
+                    <td scope="row" style="font-weight: 400; vertical-align: middle; text-align: center;">
+                      {{ item.progreso }}%
+                    </td>
+                    <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      ">
+                      <button data-toggle="tooltip" data-placement="top" title="Ajuste Documento Soporte"
+                        class="btn mr-1" style="padding: 0px; height: 20px" [routerLink]="['/informe/nominaElectronica/detalle-nomina/' + item.id]">
+                        <i class="bi bi-journal-arrow-down" style="color: #019d28"></i>
+                      </button>
+                    </td>
+
+                    <!-- <td scope="row" style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      ">
+                      <span *ngIf="item.legalStatus == 'ACCEPTED'" title="Aceptada" class="badge badge-success"
+                        style="font-size: 80%">
+                        {{ item.legalStatus }}</span>
+                      <span *ngIf="
+                          item.legalStatus != 'ACCEPTED' &&
+                          item.legalStatus != 'DIAN_MANTENIMIENTO'
+                        " title="Rechazada" class="badge badge-danger" style="font-size: 80%">
+                        {{ item.legalStatus }}</span>
+
+                      <span *ngIf="item.legalStatus == 'DIAN_MANTENIMIENTO'" title="Rechazada"
+                        class="badge badge-warning" style="font-size: 80%">
+                        {{ item.legalStatus }}</span>
+                    </td>
+                   -->
+                  </tr>
+                </ng-container>
+
+                <ng-template #nodata>
+                  <tr>
+                    <td scope="row" colspan="10" class="text-muted" style="vertical-align: middle">
+                      <h4 class="h4-sin">
+                        Sin registros de ventas para el filtro aplicado
+                      </h4>
+                    </td>
+                  </tr>
+                </ng-template>
+              </tbody>
+              <tfoot *ngIf="!loaded && count > 0">
+                <tr>
+                  <td colspan="10">
+                    <img src="../../../../../assets/logos/Loading-Puvesoft.gif"
+                      style="width: 6rem; margin-left: calc(50% - 3rem)" />
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          Paginas: {{ pages }}
+          <div style="text-align: center;">
+          <pagination-controls
+            (pageChange)="paginate($event)"
+            *ngIf="totalItems > 0"
+            previousLabel=""
+            nextLabel=""
+          />
+        </div>
+        </div>
+      </div>
+    </div>
+    <app-ticket *ngIf="showTicket" (editEvent)="closeTicket($event)" [id]="idInvoice" [type]="1">
+    </app-ticket>
+    <app-ticket_venta_carta *ngIf="showTicketVentaCarta" (editEvent)="closeTicketCarta($event)" [id]="idInvoice"
+      [type]="1">
+    </app-ticket_venta_carta>
+  </div>
+</div>
+
+<ng-template #loading>
+  <img src="../../../../../assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%" />
+</ng-template>
+
+<ng-template #loading2>
+  <div class="text-center">
+    <img src="../../../../../assets/logos/Loading-Puvesoft.gif" style="
+        width: 6rem;
+        height: 6rem;
+        margin-left: 45%;
+        margin-top: 10%;
+        margin-bottom: 100px;
+      " />
+  </div>
+</ng-template>

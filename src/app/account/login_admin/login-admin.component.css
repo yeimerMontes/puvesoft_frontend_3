@@ -1,0 +1,29 @@
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 40px;
+    left: 40px; /* Cambiado a la izquierda */
+    background-color: #25d366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px #999;
+    z-index: 1000;
+  }
+  
+  .whatsapp-float i {
+    font-size: 30px; /* Asegúrate de que el icono tenga el tamaño correcto */
+    color: #fff; /* Color del icono */
+  }
+  
+
+  /* En styles.css o en el archivo de estilos del componente */
+.conectapos-style {
+  background: rgb(1, 151, 134) !important;
+  border-color: rgb(1, 151, 134) !important;
+}

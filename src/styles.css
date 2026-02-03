@@ -1,0 +1,316 @@
+/* You can add global styles to this file, and also import other style files */
+.fixed-background {
+    /* background: url("/assets/img/puvesoftFondo1.png") no-repeat center center fixed; */
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+@import url("https://fonts.googleapis.com/css?family=roboto:300,400,400i,600,700");
+
+
+body {
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    background-color: rgb(248, 248, 248);
+}
+
+.form-control {
+    font-size: 12px !important;
+    height: 27px;
+    padding: 5px;
+    border-radius: 9px !important;
+}
+
+.form-control-login {
+  border-left-style: outset;
+    border-top-style: inset;
+    padding: 5px;
+    border-radius: 9px !important;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-color: #0077f3;
+    border-top-width: 2px;
+    border: -1px;
+    inline-size: -webkit-fill-available;
+    outline-color: #0d549e;
+}
+
+.menu-item-li {
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    color: #fff;
+}
+
+.card { 
+    border: none;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 15px 0px, rgba(0, 0, 0, 0.04) 0px 1px 6px 0px;
+}
+
+.btn-primary {
+    background-color: rgb(44, 83, 158) !important;
+    border-bottom-color: rgb(20, 83, 136) !important;
+    border-left-color: rgb(20, 83, 136) !important;
+    border-top-color: rgb(20, 83, 136) !important;
+    border-right-color: rgb(20, 83, 136) !important;
+}
+
+.btn-primary:hover {
+    background-color: rgb(22 41 72) !important;
+    border-bottom-color: rgb(22 41 72) !important;
+    border-left-color: rgb(22 41 72) !important;
+    border-top-color: rgb(22 41 72) !important;
+    border-right-color: rgb(22 41 72) !important;
+}
+
+.h4-sin {
+    font-size: 1.2rem;
+    text-align: center;
+    padding-top: 10px;
+}
+
+
+.active>.page-link{
+    background-color: #2c539e !important;
+    border-color: #2c539e !important;
+    color: #fff !important;
+}
+
+.page-link{
+    color: rgb(85, 85, 85) !important;
+}
+
+.disabled>.page-link{
+    color: rgb(206, 206, 206) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgb(0 0 0 / 2%);
+}
+
+
+.btn-normal {
+    color: #333333;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat: repeat-x;
+    border: 1px solid #cccccc;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    border-bottom-color: #b3b3b3;
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+       -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn-normal:hover,
+  .btn-normal:focus,
+  .btn-normal:active,
+  .btn-normal.active,
+  .btn-normal.disabled,
+  .btn-normal[disabled] {
+    color: #333333;
+    background: #f3f3f3;
+  }
+  
+  .btn-normal:active,
+  .btn-normal.active {
+    background-color: #cccccc \9;
+  }
+  
+  .btn-normal:hover,
+  .btn-normal:focus {
+    color: #333333;
+    text-decoration: none;
+    background-position: 0 -15px;
+    -webkit-transition: background-position 0.1s linear;
+       -moz-transition: background-position 0.1s linear;
+         -o-transition: background-position 0.1s linear;
+            transition: background-position 0.1s linear;
+  }
+  
+  .btn-normal:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+  }
+  
+  .btn-normal.active,
+  .btn-normal:active {
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+       -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .btn-normal.disabled,
+  .btn-normal[disabled] {
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+       -moz-box-shadow: none;
+            box-shadow: none;
+  }
+
+/* Estilos de anchos de modales */
+.modal-sm-size {
+    width: 300px;
+}
+
+
+
+/* ESTILOS PARA VENTAS */
+.columx2 {
+    width: 100%;
+    float: left;
+    padding: 0px 0px 0px 0px;
+    box-sizing: border-box;
+  }
+
+  .columna {
+    height: 130px;
+    background-color: rgb(255, 255, 255);
+    /*  background-image: url('http://picsum.photos/800/600?image=307'); */
+    background-position: center;
+    background-size: cover;
+  }
+
+  .columx2 img {
+    width: 100%;
+    margin: auto;
+  }
+
+  .pleca2 {
+    width: 100%;
+    /* Para bajar la imagen */
+    height: 50px;
+  }
+
+  .pleca2 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .columna > img {
+    width: 100%;
+    /* Para ajustar el tamaño de la imagen */
+    height: calc(100% - 50px);
+    object-fit: contain;
+  }
+
+  /* Para estilizar el scrollign */
+  .contenedor {
+    height: 100px;
+    max-width: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    overflow-y: hidden;
+    white-space: nowrap;
+  }
+
+  /* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+  .contenedor::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+
+  .contenedor::-webkit-scrollbar:vertical {
+    width: 10px;
+  }
+
+  .contenedor::-webkit-scrollbar-button:increment,
+  .contenedor::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  .contenedor::-webkit-scrollbar:horizontal {
+    height: 10px;
+  }
+
+  .contenedor::-webkit-scrollbar-thumb {
+    background-color: #aebdcc;
+    border-radius: 20px;
+    border: 2px solid #f1f2f3;
+  }
+
+  .contenedor::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  /* Para limitar el numero de caracteres de la categoria */
+  .module {
+    margin: 0 0 1em 0;
+    overflow: hidden;
+  }
+
+  .module p {
+    margin: 0;
+  }
+
+  .line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+  }
+
+  /* Para limitar el numero de caracteres productos */
+  .moduleprod {
+    margin: 0 0 1em 0;
+    overflow: hidden;
+  }
+
+  .line-clampprod {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+
+  .info-total-product {
+    width: 40%;
+    border: 0px;
+    text-align: right;
+    font-size: 17px;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .list {
+    list-style: none;
+  }
+
+
+.modal-adaptable {
+  width: 640px;
+  min-width: 640px;
+}
+
+@media (max-width: 768px) {
+  .modal-adaptable {
+    width: 80%;
+    min-width: 80%;
+  }  
+}

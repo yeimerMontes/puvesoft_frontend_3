@@ -1,0 +1,756 @@
+<div class="row" *ngIf="loaded; else loading">
+  <div
+    class="modal fade"
+    bsModal
+    #staticModal2="bs-modal"
+    [config]="{ backdrop: 'static' }"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="dialog-static-name"
+  >
+    <div class="modal-dialog modal-lg2">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 id="dialog-static-name" class="modal-title pull-left">
+            Vista previa del documento.
+          </h6>
+          <button
+            class="rounded"
+            style="
+              border: 0px;
+              margin-left: 28%;
+              padding-left: 10px;
+              padding-right: 15px;
+            "
+            ngxPrint
+            printSectionId="printThis"
+          >
+            <img
+              src="../../../../../assets/logos/pdf.png"
+              tooltip="Exportar a PDF"
+              placement="auto"
+              style="width: 35px; padding-bottom: 5px"
+            />
+            Imprimir o Descargar
+          </button>
+          <button
+            type="button"
+            class="close pull-right"
+            aria-label="Close"
+            (click)="closeModal2()"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="height: 80vh; overflow-y: auto">
+          <!-- 'printThis' is template reference -->
+          <div #printThis id="printThis">
+            <div *ngIf="loaded2">
+              <table
+                width="100%"
+                style="
+                  border: 0px solid #000;
+                  text-align: center;
+                  font-family: Tahoma, Helvetica, sans-serif;
+                "
+              >
+                <tr>
+                  <td>
+                    <img
+                      *ngIf="logo != '' && logo != null"
+                      style="height: 90px"
+                      src="{{ logo }}"
+                    />
+                  </td>
+                  <td
+                    style="
+                      text-align: center;
+                      font-size: 15px;
+                      color: #000000;
+                    "
+                  >
+                    <b>LISTADO DE GASTOS POR CATEGORIAS</b>
+                    <ng-container *ngIf="fechaInicial && fechaFinal">
+                      <p
+                        style="
+                          font-size: 12px;
+                          font-family: Arial, Helvetica, sans-serif;
+                        "
+                      >
+                        <b>DESDE: </b>
+                        <time>{{ fechaInicial | date: "dd-MM-yyyy" }}</time>
+                        {{ horaInicial }}
+                        <b>&nbsp; HASTA: </b>
+                        <time>{{ fechaFinal | date: "dd-MM-yyyy" }} </time>
+                        {{ horaFinal }}
+                      </p>
+                      <br />
+                    </ng-container>
+                  </td>
+                  <td
+                    style="text-align: center; font-size: 14px; color: #000000"
+                  >
+                    <p
+                      style="
+                        text-align: center;
+                        font-size: 14px;
+                        font-weight: bold;
+                        color: #1d1d1d;
+                        font-family: Verdana, Geneva, Tahoma, sans-serif;
+                      "
+                    >
+                      {{ sucursal }}
+                    </p>
+                    NIT: {{ nit }} - DIRECCIÓN: {{ direccion }}<br />
+                    FECHA: {{ fecha }}<br />
+                  </td>
+                </tr>
+              </table>
+              <hr width="98%" />
+
+              <table
+                style="
+                  width: 100%;
+                  border: 1px solid rgb(70, 69, 69);
+                  border-collapse: collapse;
+                  font-family: sans-serif;
+                "
+              >
+                <ng-container *ngFor="let servicio of data; let i = index">
+                  <!-- Valido para que muestre solo los servicios que tienen grasto -->
+                  <ng-container *ngIf="servicio.gasto.length > 0">
+                    <thead style="background: #e3e3e3">
+                      <tr>
+                        <th colspan="10">{{ servicio.nombre }}</th>
+                      </tr>
+                      <tr
+                        style="
+                          border: 1px solid #000;
+                          font-size: 14px;
+                          background: rgb(231, 231, 231);
+                          text-align: center;
+                        "
+                      >
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Item
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Fecha y Hora
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Descripción Del Gasto
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Categoria
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Proveedor
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Responsable
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Metodo de pago
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Valor
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Egreso<br />de Caja
+                        </th>
+                        <th
+                          scope="col"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                          "
+                        >
+                          Estado
+                        </th>
+                        <!-- 
+                        <th scope="col" style="width: 90px; text-align: center">
+                          Acción
+                        </th> -->
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        *ngFor="let gasto of servicio.gasto; let i = index"
+                        style="
+                          border: 1px solid rgb(70, 69, 69);
+                          padding-left: 10px;
+                          padding-right: 10px;
+                        "
+                      >
+                        <td
+                          scope="row"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                            font-size: 12px;
+                          "
+                        >
+                          {{ i + 1 }}
+                        </td>
+
+                        <td
+                          scope="row"
+                          style="
+                            border: 1px solid rgb(70, 69, 69);
+                            padding-left: 10px;
+                            padding-right: 10px;
+                            text-align: center;
+                            font-size: 12px;
+                          "
+                        >
+                          {{ gasto.fecha }}
+                        </td>
+                        <td
+                          style="width: 22%; border: 1px solid rgb(70, 69, 69)"
+                        >
+                          {{ gasto.descripcion }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.categoria_gasto }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.proveedor }}
+                        </td>
+
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.responsable }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.metodo_pago }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            text-align: right;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ formatearNumber(gasto.valor) }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            text-align: center;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.egreso_de_caja }}
+                        </td>
+                        <td
+                          scope="row"
+                          style="
+                            font-weight: 400;
+                            font-size: 12px;
+                            vertical-align: middle;
+                            text-align: center;
+                            border: 1px solid rgb(70, 69, 69);
+                          "
+                        >
+                          {{ gasto.estado_id }}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tr
+                      style="
+                        font-weight: 400;
+                        font-size: 12px;
+                        color: #000000;
+                        font-weight: bold;
+                      "
+                    >
+                      <td
+                        scope="row"
+                        style="width: 80px; text-align: right; font-size: 14px"
+                        colspan="7"
+                      >
+                        TOTAL GASTOS
+                      </td>
+                      <td
+                        scope="row"
+                        style="width: 80px; text-align: right; font-size: 14px"
+                      >
+                        {{ formatearNumber(servicio.total_gasto) }}
+                      </td>
+                      <td colspan="3"></td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </table>
+            </div>
+          </div>
+          <ng-template [ngIf]="!loaded2">
+            <div
+              class="spinner-border"
+              style="
+                width: 3rem;
+                height: 3rem;
+                margin-left: 50%;
+                margin-top: 10%;
+              "
+              role="status"
+            >
+              <span class="sr-only">Loading...</span>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FIN MODAL PARA GENERAR INFORME -->
+
+  <div class="col-lg-12 col-md-12 mb-4" style="padding: 0px">
+    <div class="row">
+      <div class="col col-sm" style="text-align: center">
+        <H1 class="titulo text-center mb-0">Gastos por Categoría</H1>
+      </div>
+    </div>
+    <div class="row" style="padding-left: 30px">
+      <div class="col">
+        <div
+          class="row float-left"
+          style="padding-right: 30px; text-align: center"
+        >
+          <form [formGroup]="size" style="width: 80px">
+            <span class="text-muted text-small">Por página</span>
+            <select
+              required
+              class="form-control mb-1 rounded"
+              style="height: 27px; padding-bottom: 0px; padding-top: 0px"
+              formControlName="data"
+            >
+              <option *ngFor="let item of selects" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </form>
+        </div>
+      </div>
+      <div class="col">
+        <div
+          class="row float-right"
+          style="padding-right: 30px; text-align: center"
+        >
+          <div class="col">
+            <span class="text-muted text-small">Exportar</span>
+            <div class="row">
+              <button
+                style="
+                  background-color: transparent;
+                  border: 10px;
+                  padding-left: 0px;
+                  padding-right: 0px;
+                "
+                (click)="generateExcel()"
+              >
+                <img
+                  src="../../../../../assets/logos/excel_1.png"
+                  tooltip="Exportar a Excel"
+                  placement="auto"
+                  style="width: 30px; padding-bottom: 5px"
+                /></button
+              >&nbsp;&nbsp;&nbsp;
+              <button
+                style="
+                  background-color: transparent;
+                  border: 10px;
+                  padding-left: 0px;
+                  padding-right: 0px;
+                "
+                (click)="openModal2()"
+              >
+                <img
+                  src="../../../../../assets/logos/pdf.png"
+                  tooltip="Exportar a PDF"
+                  placement="auto"
+                  style="width: 30px; padding-bottom: 5px"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding: 15px">
+        <form [formGroup]="search" (ngSubmit)="buscarGastos()">
+          <div class="row">
+            <!-- <div class="col-md-6">
+            <h5 class="card-title" style="font-weight: 600;">Lista de Gastos</h5>
+          </div> -->
+            <div class="col-md-2 col-6">
+              <label style="font-weight: bold; font-size: 12px"
+                >Fecha Inicial</label
+              ><br />
+              <input
+                type="date"
+                class="form-control rounded"
+                formControlName="fecha_inicial"
+                style="font-size: 13px"
+                aria-label="Search"
+                aria-describedby="search-addon"
+              />
+              <input
+                type="time"
+                class="form-control rounded"
+                formControlName="hora_inicial"
+                style="font-size: 13px; margin-top: 5px"
+                aria-describedby="search-addon"
+              />
+            </div>
+            <div class="col-md-2 col-6">
+              <label style="font-weight: bold; font-size: 12px"
+                >Fecha Final</label
+              ><br />
+              <input
+                type="date"
+                class="form-control rounded"
+                formControlName="fecha_final"
+                style="font-size: 13px"
+                aria-label="Search"
+                aria-describedby="search-addon"
+              />
+              <input
+                type="time"
+                class="form-control rounded"
+                formControlName="hora_final"
+                style="font-size: 13px; margin-top: 5px"
+                aria-describedby="search-addon"
+              />
+            </div>
+            <div class="col-md-2 col-12">
+              <label style="font-weight: bold; font-size: 12px">Categoria</label
+              ><br />
+              <select
+                required
+                class="form-control mb-1 rounded"
+                formControlName="categoria"
+              >
+                <option value="">TODAS</option>
+                <ng-container *ngFor="let item of dataCategoria">
+                  <option
+                    *ngIf="item.estado_id == 'ACTIVO'"
+                    [value]="item.codigo"
+                  >
+                    {{ item.nombre }}
+                  </option>
+                </ng-container>
+              </select>
+
+              <label style="font-weight: bold; font-size: 12px">Usuario</label
+              ><br />
+              <select
+                required
+                class="form-control mb-1 rounded"
+                formControlName="usuario"
+              >
+                <option [value]="''" selected>TODOS</option>
+                <ng-container *ngFor="let item of dataUsuario">
+                  <option [value]="item.codigo">
+                    {{ item.nombre | uppercase }}
+                  </option>
+                </ng-container>
+              </select>
+            </div>
+            <div
+              class="col-md-2 d-flex justify-content-center"
+              style="margin-top: 5px"
+            >
+              <div class="row float-left" style="padding: 17px">
+                <button
+                  style="height: 35px; border-radius: 10px; font-size: 14px"
+                  class="btn btn-primary float-right"
+                  type="submit"
+                >
+                  Consultar
+                </button>
+              </div>
+            </div>
+          </div>
+          <br />
+        </form>
+
+        <div style="display: block; overflow-y: auto">
+          <table
+            class="table table-hover table-striped content-table table-bordered"
+            style="border: 0px"
+          >
+            <ng-container *ngFor="let servicio of data; let i = index">
+              <!-- Valido para que muestre solo los servicios que tienen grasto -->
+              <ng-container *ngIf="servicio.gasto.length > 0">
+                <thead style="background: #eeeeee">
+                  <tr style="background: #00000012">
+                    <th style="font-size: 14px" colspan="10">
+                      {{ servicio.nombre }}
+                    </th>
+                  </tr>
+                  <tr style="color: rgb(44, 44, 44); text-align: center">
+                    <th>Item</th>
+                    <th>Fecha y Hora</th>
+                    <th>Descripción Del Gasto</th>
+                    <th>Categoria</th>
+                    <th>Proveedor</th>
+                    <th>Responsable</th>
+                    <th>Metodo de pago</th>
+                    <th>Valor</th>
+                    <th>Egreso<br />de Caja</th>
+                    <th>Estado</th>
+                    <!-- 
+                    <th scope="col" style="width: 90px; text-align: center">
+                      Acción
+                    </th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let gasto of servicio.gasto; let i = index"
+                    style="font-weight: 400"
+                  >
+                    <td scope="row" style="width: 80px; text-align: center">
+                      {{ i + 1 }}
+                    </td>
+
+                    <td
+                      scope="row"
+                      style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      "
+                    >
+                      {{ gasto.fecha }}
+                    </td>
+                    <td style="width: 22%">
+                      <textarea
+                        style="width: 100%; height: 40px"
+                        disabled
+                        readonly
+                        >{{ gasto.descripcion }}</textarea
+                      >
+                    </td>
+                    <td
+                      scope="row"
+                      style="font-weight: 400; vertical-align: middle"
+                    >
+                      {{ gasto.categoria_gasto }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="font-weight: 400; vertical-align: middle"
+                    >
+                      {{ gasto.proveedor }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="font-weight: 400; vertical-align: middle"
+                    >
+                      {{ gasto.responsable }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="font-weight: 400; vertical-align: middle"
+                    >
+                      {{ gasto.metodo_pago }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: right;
+                      "
+                    >
+                      {{ formatearNumber(gasto.valor) }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      "
+                    >
+                      {{ gasto.egreso_de_caja }}
+                    </td>
+                    <td
+                      scope="row"
+                      style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      "
+                      *ngIf="gasto.estado_id == 'PROCESADO'"
+                    >
+                      <span
+                        class="badge badge-success"
+                        style="font-size: 80%; background-color: #689975"
+                        >Procesado</span
+                      >
+                    </td>
+                    <td
+                      scope="row"
+                      style="
+                        font-weight: 400;
+                        vertical-align: middle;
+                        text-align: center;
+                      "
+                      *ngIf="gasto.estado_id == 'ANULADO'"
+                    >
+                      <span
+                        class="badge badge-danger"
+                        style="font-size: 80%; background-color: #df6868"
+                        >Anulado</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+                <tr style="font-weight: 400; color: #000000; font-weight: bold">
+                  <td
+                    scope="row"
+                    style="width: 80px; text-align: right; font-size: 14px"
+                    colspan="7"
+                  >
+                    TOTAL GASTOS
+                  </td>
+                  <td
+                    scope="row"
+                    style="width: 80px; text-align: right; font-size: 14px"
+                  >
+                    {{ formatearNumber(servicio.total_gasto) }}
+                  </td>
+                  <td colspan="3"></td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <img
+    src="../../../../../assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%"
+  />
+</ng-template>

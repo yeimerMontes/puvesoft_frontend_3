@@ -1,0 +1,143 @@
+.columx2 {
+  width: 100%;
+  float: left;
+  padding: 10px 0px 0px 0px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 700px) {
+  .venta-rapida {
+    position: absolute;
+    right: 0;
+  }
+}
+
+.columna {
+  height: 150px;
+  background-color: rgb(255, 255, 255);
+  /*  background-image: url('http://picsum.photos/800/600?image=307'); */
+  background-position: center;
+  background-size: cover;
+}
+
+.columx2 img {
+  width: 100%;
+  margin: auto;
+}
+
+.pleca2 {
+  width: 100%;
+  /* Para bajar la imagen */
+  height: 50px;
+}
+
+.pleca2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.columna > img {
+  width: 100%;
+  /* Para ajustar el tamaño de la imagen */
+  height: calc(100% - 75px);
+  object-fit: contain;
+}
+
+/* Para estilizar el scrollign */
+.contenedor {
+  height: 100px;
+  max-width: 100%;
+  overflow: auto;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+/* Estilos para motores Webkit y blink (Chrome, Safari, Opera... )*/
+
+.contenedor::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.contenedor::-webkit-scrollbar:vertical {
+  width: 10px;
+}
+
+.contenedor::-webkit-scrollbar-button:increment,
+.contenedor::-webkit-scrollbar-button {
+  display: none;
+}
+
+.contenedor::-webkit-scrollbar:horizontal {
+  height: 10px;
+}
+
+.contenedor::-webkit-scrollbar-thumb {
+  background-color: #aebdcc;
+  border-radius: 20px;
+  border: 2px solid #f1f2f3;
+}
+
+.contenedor::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Para limitar el numero de caracteres de la categoria */
+.module {
+  margin: 0 0 1em 0;
+  overflow: hidden;
+}
+
+.module p {
+  margin: 0;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* Para limitar el numero de caracteres productos */
+.moduleprod {
+  margin: 0 0 1em 0;
+  overflow: hidden;
+}
+
+.line-clampprod {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.td-zona {
+  background: #fff;
+  width: 120px;
+  height: 70px;
+  margin: 5px;
+  font-size: 8px;
+  font-weight: bold;
+  border: 1px solid #dadada;
+  border-radius: 5px;
+}
+
+.img-zona {
+  width: 50px;
+  height: 50px;
+  border-radius: 30px;
+  padding-top: 2px;
+}
+
+.div-zona-seleccionada {
+  padding: 10px;
+  border-radius: 5px;
+  background: linear-gradient(
+    to bottom,
+    rgba(232, 240, 247, 1) 0%,
+    rgba(232, 240, 247, 0.96) 23%,
+    rgba(172, 190, 224, 0.87) 76%,
+    rgba(172, 190, 224, 0.83) 100%
+  );
+}

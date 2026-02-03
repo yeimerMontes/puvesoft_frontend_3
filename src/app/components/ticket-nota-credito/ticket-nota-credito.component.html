@@ -1,0 +1,364 @@
+<!-- MODAL PARA LA GESTION DEL PAGO -->
+<div class="modal fade" bsModal #staticModalPagar="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog" style="min-width: 80% !important; display: none">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h4 id="dialog-static-name" class="modal-title pull-left" style="color: aliceblue">
+          Información de pago
+        </h4>
+        <div class="d-flex">
+          <button type="button" class="close" aria-label="Close" (click)="closeModalPagar()">
+            <span aria-hidden="true" style="color: aliceblue">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-secondary" (click)="imprimir()">Imprimir</button>
+        <div #print_ticket id="print_ticket" [ngStyle]="{
+            'max-width': anchoTicket + 'px',
+            'font-size': sizeLetraTicket + 'px'
+          }" style="
+            font-style: normal;
+            line-height: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+          ">
+          <!-- Sucursal -->
+
+          <table style="width: 100%; font-family: 'Arial'">
+            <tr>
+              <td style="text-align: center">
+                <h4 style="text-align: center; margin-bottom: 0; margin-top: 0;">{{ titleTicket }}</h4>
+                <p style="font-size: 14px; text-align: center; margin-bottom: 10px; margin-top: 0;">{{ tipoConceptoById(dataDetalle?.notaCredito.tipo_concepto) }}</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align: center">
+                <h3 style="
+                    text-align: center;
+                    margin-bottom: 5px;
+                    font-size: 14px;
+                  ">
+                  {{ sucursal?.nombre }}
+                </h3>
+              </td>
+            </tr>
+            <tr *ngIf="sucursal?.logo">
+              <td style="text-align: center">
+                <img src="{{ sucursal?.logo }}" alt="Puvesoft" />
+              </td>
+            </tr>
+            <tr *ngIf="sucursal?.nit">
+              <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                <span>{{ sucursal?.nit }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                <span>{{ sucursal?.direccion }} - {{ sucursal?.telefono }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                <span>{{ sucursal?.departamento }} -
+                  {{ sucursal?.municipio }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="sucursal?.regimen">
+              <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-transform: capitalize; text-align: center">
+                {{ sucursal?.regimen }}
+              </td>
+            </tr>
+            <!-- <ng-container *ngIf="dataDetalle?.facturaVenta?.f_electronica == 2 || dataDetalle?.facturaVenta?.f_electronica == 1">
+              <tr *ngIf="sucursal?.resolucion_pos">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                 Resolución: {{ sucursal?.resolucion_pos }}
+                </td>
+              </tr>
+              <tr *ngIf="sucursal?.prefijo">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                  Prefijo: {{ sucursal?.prefijo }} del:
+                  {{ sucursal?.min_numero_dian }} al:
+                  {{ sucursal?.max_numero_dian }}
+                </td>
+              </tr>
+              <tr *ngIf="sucursal?.vigencia_inicial_pos">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                  Vigencia: {{ sucursal?.vigencia_inicial_pos }} hasta:
+                  {{ sucursal?.vigencia_final_pos }}
+                </td>
+              </tr>
+            </ng-container> -->
+            <!-- <ng-container *ngIf="dataDetalle?.facturaVenta?.f_electronica == 3">
+              <tr *ngIf="sucursal?.resolucion_num_dian">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                 Resolución: {{ sucursal?.resolucion_pos }}
+                </td>
+              </tr>
+              <tr *ngIf="sucursal?.prefijo_dian">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                  Prefijo: {{ sucursal?.prefijo_dian }} del:
+                  {{ sucursal?.rango_inicial_pos }} al:
+                  {{ sucursal?.rango_final_pos }}
+                </td>
+              </tr>
+              <tr *ngIf="sucursal?.fecha_inicio_dian">
+                <td [ngStyle]="{
+                  'font-size': sizeLetraTicket + 'px'
+                }" style="text-align: center">
+                  Vigencia: {{ sucursal?.fecha_inicio_dian }} hasta:
+                  {{ sucursal?.fecha_fin_dian }}
+                </td>
+              </tr>
+            </ng-container> -->
+          </table>
+
+          <table [ngStyle]="{
+              'font-size': sizeLetraTicket + 'px'
+            }" style="
+              width: calc(100% - 35px);
+              margin-top: 15px;
+              font-family: 'Arial';
+            ">
+
+            <tr>
+                <td>
+                <span style="text-align: center; font-weight: bold">Cód Nota Crédito.</span>
+                <span>{{ dataDetalle?.notaCredito?.cod_credito }}</span>
+                </td>
+            </tr>
+
+            <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Factura No.</span>
+                <span>{{ dataDetalle?.notaCredito?.cod_factura }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Fecha:</span>
+                <span>{{ dataDetalle?.notaCredito?.fecha_creacion_nota }}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">NIT/Doc cliente:</span>
+                <span>{{ dataDetalle?.cliente?.documento }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Cliente:</span>
+                <span>{{ dataDetalle?.cliente?.nombre }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Responsable:</span>
+                <span>{{ dataDetalle?.notaCredito?.responsable_nota_credito }}</span>
+              </td>
+            </tr>
+            <!-- <tr>
+              <td>
+                <span style="text-align: center; font-weight: bold">Caja:</span>
+                <span>{{ dataDetalle?.usuario_caja?.nombre }}</span>
+              </td>
+            </tr> -->
+            <tr *ngIf="dataDetalle?.mesa">
+              <td>
+                <span style="text-align: center; font-weight: bold">Mesa:</span>
+                <span>{{ dataDetalle?.mesa?.nombre }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="dataDetalle?.domicilio?.direccion">
+              <td>
+                <span style="text-align: center; font-weight: bold">Dir domicilio:</span>
+                <span>{{ dataDetalle?.domicilio?.direccion }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="dataDetalle?.domicilio?.telefono">
+              <td>
+                <span style="text-align: center; font-weight: bold">Tel domicilio:</span>
+                <span>{{ dataDetalle?.domicilio?.telefono }}</span>
+              </td>
+            </tr>
+
+            <tr *ngIf="dataDetalle?.notaCredito?.metodo_pago">
+                <td>
+                  <span style="text-align: center; font-weight: bold">Forma de Pago:</span>
+                  <span>{{ (dataDetalle?.notaCredito.metodo_pago != 'CRÉDITO') ? 'CONTADO' : 'CRÉDITO' }}</span>
+                </td>
+              </tr>
+
+            <tr *ngIf="dataDetalle?.notaCredito?.legalStatus">
+                <td>
+                  <span style="text-align: center; font-weight: bold">Estado Legal:</span>
+                  <span>{{ dataDetalle?.notaCredito?.legalStatus }}</span>
+                </td>
+              </tr>    
+
+          </table>
+
+          <table [ngStyle]="{
+              'font-size': sizeLetraTicket + 'px'
+            }" style="width: 100%; margin-top: 15px; font-family: 'Arial'">
+            <thead>
+              <tr>
+                <th>CAN</th>
+                <th style="text-align: center">UND</th>
+                <th *ngIf="canShowTotals" style="text-align: right">VALOR</th>
+                <th *ngIf="canShowTotals" style="text-align: right">TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let item of dataDetalle.notaCreditoDetalle">
+                <ng-container>
+                  <tr>
+                    <td style="text-align: center">
+                      {{ item.cantidad_movimiento }}
+                    </td>
+                    <td style="text-align: center">{{ item.sigla }}</td>
+                    <td *ngIf="canShowTotals" style="text-align: right">
+                      {{ formatearNumber(item.valor_venta_movimiento) }}
+                    </td>
+                    <td *ngIf="canShowTotals" style="text-align: right">
+                      {{ formatearNumber(item.total_movimiento) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="5" style="padding-bottom: 6px">
+                      {{ item.nombre }}
+                      <ng-container *ngIf="item.cod_barra">
+                        <p style="margin-top: 0px">
+                          <span style="font-weight: bold">Cód: </span>
+                          {{ item?.cod_barra }}
+                        </p>
+                      </ng-container>
+                    </td>
+                    
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+            <tfoot *ngIf="canShowTotals">
+              <tr>
+                <td colspan="3" style="text-align: right">SUBTOTAL</td>
+                <td style="text-align: right">
+                    {{ moneda }}{{ formatearNumber(dataDetalle?.notaCredito?.subtotal_movimiento_s_imp) }}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: right">IMPUESTOS</td>
+                <td style="text-align: right">
+                    {{ moneda }}{{ formatearNumber(dataDetalle?.notaCredito?.total_movimiento-dataDetalle?.notaCredito?.subtotal_movimiento_s_imp) }}
+                </td>
+              </tr>
+              <tr *ngIf="dataDetalle?.notaCredito?.propina_movimiento">
+                <td colspan="3" style="text-align: right">SERV. VOLUNTARIO</td>
+                <td style="text-align: right">
+                    {{ moneda }}{{ formatearNumber(dataDetalle?.notaCredito?.propina_movimiento) }}
+                </td>
+              </tr>
+              <tr *ngIf="dataDetalle?.notaCredito?.domicilio_movimiento">
+                <td colspan="3" style="text-align: right">DOMICILIO</td>
+                <td style="text-align: right">
+                  {{ moneda }}{{ formatearNumber(dataDetalle?.notaCredito?.domicilio_movimiento) }}
+                </td>
+              </tr>
+              <tr>
+                <th colspan="3" style="text-align: right">
+                    {{ dataDetalle?.notaCredito?.metodo_pago }}
+                </th>
+                <td style="text-align: right">
+                  {{ moneda }}{{ formatearNumber(
+                    (+dataDetalle?.notaCredito.total_movimiento)
+                          + ((+dataDetalle?.notaCredito.domicilio_movimiento) ?? 0)
+                          + ((+dataDetalle?.notaCredito.propina_movimiento) ?? 0)
+                    )
+                   }}
+                </td>
+              </tr>
+             
+            </tfoot>
+          </table>
+
+          <div *ngIf="dataDetalle?.notaCredito?.cude">
+            <qrcode style="width: 45px; text-align: center" [qrdata]="'https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey='+dataDetalle?.notaCredito?.cude"
+              [allowEmptyString]="true" [ariaLabel]="'QR Code image with the following content...'"
+              [cssClass]="'center'" [colorDark]="'#000000ff'" [colorLight]="'#ffffffff'" [elementType]="'svg'"
+              [errorCorrectionLevel]="'M'" [imageHeight]="60" [imageWidth]="60" [margin]="4" [scale]="1"
+              [title]="'A custom title attribute'" [width]="230"></qrcode>
+          </div>
+
+          <div style="
+              text-align: center;
+              margin-top: 8px;
+              font-family: Arial;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+            " *ngIf="dataDetalle?.notaCredito?.cude">
+            <p [ngStyle]="{
+                'font-size': sizeLetraTicket + 'px'
+              }" style="padding: 0 !important; margin: 0 !important">
+              <!-- <label ="dataDetalle?.notaCredito?.f_electronica == 2">Cude:
+              </label> -->
+              <label>Cude:
+              </label>
+            </p>
+            <p [ngStyle]="{
+                'font-size': sizeLetraTicket + 'px'
+              }" style="padding: 0 !important; margin: 0 !important">
+              {{ dataDetalle?.notaCredito?.cude }}
+            </p>
+          </div>
+
+          <div [ngStyle]="{
+               'font-size': sizeLetraTicket + 'px',
+               'white-space': 'pre-wrap'
+            }" style="text-align: center; font-family: Arial">
+            <p>{{ sucursal?.texto_venta }}</p>
+          </div>
+
+          <div style="text-align: center; margin-top: 8px; font-family: Arial">
+            <p style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              ">
+              Generado por {{ nameSite }}
+            </p>
+            <p style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              ">
+              Visítanos {{ dataDetalle?.infoRevendedor.web }} | Cel: {{ dataDetalle?.infoRevendedor.telefono }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

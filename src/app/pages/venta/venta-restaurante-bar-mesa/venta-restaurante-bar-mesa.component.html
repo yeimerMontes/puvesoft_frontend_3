@@ -1,0 +1,1205 @@
+<div [ngStyle]="{ display: pageView === 0 ? 'block' : 'none' }">
+  <img src="./assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem; margin-left: 50%; margin-top: 10%" />
+</div>
+
+<!-- Bloque gestion venta de productos Busquedas-->
+<div [ngStyle]="{ display: pageView === 1 ? 'block' : 'none' }">
+  <ng-container *ngIf="true">
+    <ng-container>
+      <!-- Para traer el listado de categorias -->
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Agrego el buscador -->
+          <div class="row">
+            <form [formGroup]="search" class="col-12 mt-2 mt-md-0">
+              <div class="input-group">
+                <a href="javascript:void(0);" style="padding-top: 3px; padding-right: 10px">
+                  <img style="width: 30px" src="../../../../../assets/img/buscar.png" />
+                  &nbsp;
+                  <img style="width: 30px" src="../../../../../assets/img/barra.png" /></a>
+                <input 
+                #inputSearch
+                class="form-control rounded" autofocus="true" style="height: 35px; background: #ffffff"
+                  type="text" formControlName="producto" (keyup)="buscar_nombre()"
+                  (keyup.enter)="buscar_porBarra($event.target.value)" placeholder="Encuentra tu producto aquí..."
+                  aria-label="Search" aria-describedby="search-addon" />
+              </div>
+            </form>
+          </div>
+
+          <div class="contenedor" style="
+              max-width: 100%;
+              overflow-x: auto;
+              overflow-y: hidden;
+              height: auto;
+            ">
+            <table style="width: 100%;">
+              <tr>
+                <td class="text-center" *ngFor="let item of dataCategorias" title="{{ item.nombre }}">
+                  <button [ngStyle]="{
+                      'background-color':
+                        categoriaSeleccionada == item.id ? '#dde7f7' : '#ffffff'
+                    }" (click)="getProductosActivosPorCategoriasId(item.id)" style="
+                      background: #fff;
+                      width: 120px;
+                      height: 70px;
+                      margin: 5px;
+                      font-size: 8px;
+                      font-weight: bold;
+                      border: 1px solid #dadada;
+                      border-radius: 5px;
+                    ">
+                    <img style="
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 30px;
+                        padding-top: 2px;
+                      " *ngIf="item.img == null || item.img == ''" src="../../../../../assets/img/default.png" />
+                    <img style="
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 30px;
+                        padding-top: 2px;
+                      " *ngIf="item.img != null && item.img != ''" src="{{ item.img }}" /><br />
+                    <p style="font-size: 9px" class="module line-clamp">
+                      {{ item.nombre }}
+                    </p>
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="row mb-2 px-3 px-md-0">
+            <div class="col-md-3 col-lg-3 col-sm-4 col-6 mb-2" style="padding: 7px"
+              *ngFor="let item of dataProductosActivos">
+              <div class="card"   [style]="promocion(item.promocion)"
+                (click)="openAddProductoAOrden(item)">
+                <div>
+                  <span
+                  *ngIf="!item.promocion
+                  "
+                  class="text-center p-2 ml-1"
+                  style="
+                    font-size: 12px;
+                    background-color: #c9e8ffcc;
+                    color: #000000;
+                    border-radius: 7px;
+                  "
+                  >{{ moneda }} {{ formatearNumber(item.valor_venta) }}</span
+                >
+
+                <div
+                  class="container"
+                  *ngIf="item.promocion"
+                >
+                  <label
+                    class="label-left"
+                    style="
+                      font-size: 12px;
+                      background-color: #ffe348cc;
+                      color: #000000;
+                      border-radius: 7px;
+                      text-align: left;
+                      padding: 5px;
+                    "
+                    >{{ moneda }} {{ formatearNumber(item.nuevo_valor_venta) }}</label
+                  >
+                  <label
+                    class="label-right"
+                    style="
+                      font-size: 8px;
+                      color: rgb(8, 198, 37);
+                      text-align: right;
+                      padding-top: 5px;
+                      vertical-align: middle;
+                      padding-right: 3px;
+                    "
+                    >Aplicado<br />
+                    <b style="font-size: 10px;"
+                      >{{ item.porcentaje_descuento }}%</b
+                    >
+                    DCTO
+                  </label>
+                </div>
+                  <div class="columx2">
+                    <div class="columna d-flex flex-direction-column justify-content-center"
+                    [style]="paddingPromocion(item.promocion)">
+                      <img *ngIf="item.img != null &&  item.img != ''" src="{{ item.img }}" />
+                      <img *ngIf="item.img == null || item.img == ''" src="./assets/img/defecto.jpg" />
+                    </div>
+                  </div>
+                </div>
+                <div style="
+                    background-color: rgb(2282828);
+                    height: 50px;
+                    border-radius: 5px;
+                    text-align: center;
+                    font-weight: 600;
+                  ">
+                  <div style="padding: 6px; color: #000000">
+                    <p style="font-size: 9px; line-height: 0.8rem" class="moduleprod line-clampprod">
+                      {{ item.nombre }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align: center; width: 100%">
+            <br />
+            <p *ngIf="dataProductosActivos.length == 0">
+              No se encontraron productos
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <!--   {{ formProductos.value | json }} -->
+          <table style="
+              width: 100%;
+              border-radius: 5px;
+              background: #0d549e;
+            ">
+            <tr>
+              <td>
+                <img style="width: 30px; margin-left: 10px;" src="../../../../../assets/img/icopuveB.png" />
+              </td>
+              <td style="
+                  font-size: 14px;
+                  font-weight: bold;
+                  text-align: center;
+                  width: 90%;
+                  color: #fff;
+                ">
+                ATENDIENDO {{ mesaAtendida }}
+              </td>
+              <td>
+                <button class="btn" (click)="regresarMesas()" title="Regresar" [disabled]="isDisabled" placement="auto">
+                  <img style="width: 30px;" src="../../../../../assets/img/regresarB.png" />
+                </button>
+              </td>
+            </tr>
+          </table>
+
+          <table style="width: 100%;">
+            <tr style="background-color: #ffffff">
+              <th colspan="2" style="width: 70px;">
+                <div class="row justify-content-center">
+
+                  <button class="btn p-1" (click)="openModalNota()" title="Registrar nota" placement="auto"
+                    [disabled]="isDisabled">
+                    <span class="text-muted text-small" style="font-size: 11px;">Notas</span><br>
+                    <img style="width: 30px" class="img-fluid" src="../../../../../assets/img/notasFactura.png" />
+                  </button>
+                </div>
+
+              </th>
+
+              <th colspan="2" style="width: 70px;">
+                <div class="row justify-content-center">
+
+                  <button class="btn p-1" (click)="openModalChangeTable()" title="Cambiar Mesa" placement="auto"
+                    [disabled]="isDisabled">
+                    <span class="text-muted text-small" style="font-size: 11px;">Cambiar Mesa</span><br>
+                    <img style="width: 30px" class="img-fluid" src="../../../../../assets/img/intercambiar.png" />
+                  </button>
+                </div>
+
+              </th>
+              <th colspan="2" style="width: 70px;">
+                <div class="row justify-content-center">
+
+                  <button *ngIf="factura" (click)="openModalPropina()" class="btn p-1" title="Registrar Serv. Voluntario"
+                    placement="auto" [disabled]="isDisabled">
+                    <span class="text-muted text-small" style="font-size: 11px;">Serv. Voluntario</span><br>
+                    <img style="width: 30px" class="img-fluid" src="../../../../../assets/img/propina.png" />
+                  </button>
+                </div>
+
+              </th>
+              <th colspan="2" style="width: 70px;">
+                <div class="row justify-content-center">
+
+                  <button class="btn p-1" (click)="goCotizar()" title="Cotizar" placement="auto"
+                    [disabled]="isDisabled">
+                    <span class="text-muted text-small" style="font-size: 11px;">Cotizar</span><br>
+                    <img style="width: 30px" class="img-fluid" src="../../../../../assets/img/cotizar.png" />
+                  </button>
+                </div>
+
+              </th>
+              
+              <th colspan="2" style="width: 70px;">
+                <div class="row justify-content-center">
+                  <button class="btn p-1"  ngxPrint printTitle="Abrir cajón monedero"
+                  printSectionId="printThis" title="Abrir cajón monedero" placement="auto"
+                  >
+                  <span class="text-muted text-small" style="font-size: 11px;">Abrir Cajón</span><br>
+                  <img
+                        style="width: 32px"
+                        class="img-fluid"
+                        src="../../../../../assets/img/caja-registradora.png"
+                      />
+                  </button>
+                  <div #printThis id="printThis"></div>
+                </div>
+              </th>
+            </tr>
+          </table>
+          
+          <form class="content-table1" [formGroup]="formProductos" autocomplete="off" ngSubmit="onSubmit()">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped content-table table-bordered"
+                style="border: 0px; width: 100%">
+                <thead style="background: #48659d2b; text-align: center;">
+                  <tr style="color: rgb(44, 44, 44)">
+                    <th class="p-1">Stock</th>
+                    <th class="p-1">Producto</th>
+                    <th class="p-1">Cant</th>
+                    <th class="p-1">Valor</th>
+                    <th class="p-1">% Desc</th>
+                    <th class="p-1">SubTotal</th>
+                    <th class="p-1"></th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="prds.value.length>0; else nodata">
+                  <ng-container formArrayName="prds">
+                    <ng-container
+                      *ngFor="let item of prds.controls.slice().reverse(); let i = index"
+                      [formGroupName]="prds.length - 1 - i">
+                      <tr style="
+                          font-size: 10px;
+                          color: rgb(0, 0, 0);
+                          background-color: #ffffff;
+                          
+                        ">
+                        <td class="p-1" style="width: 60px; min-width: 60px;vertical-align: middle; text-align: right; padding-right: 8px !important;">
+                          {{ formatearNumber(item.get("stock")!.value) }}
+                        </td>
+                        <td class="p-1" style="vertical-align: middle;">
+                          {{ item.get("nombre")!.value }}
+                          <br>
+                          <ul class="nav flex-column" *ngIf="item.get('caracterizaciones')!.value.length > 0">
+                            <b>Caracterizaciones</b>
+                            <!-- {{item.get("caracterizaciones").value | json}} -->
+                            <li style="padding-left: 8px;" class="nav-item" *ngFor="let subitem of item.get('caracterizaciones')!.value; let j = index">
+                              <i title="Quitar" (click)="removeCaracterizacion(item, j)" class="bi bi-dash-circle btn" style="color: #af1515; padding: 0px; margin: 0px;"></i> {{subitem.detalle}}
+                            </li>
+                          </ul>
+
+                          <ul class="nav flex-column" *ngIf="item.get('adiciones')!.value.length > 0">
+                            <b>Adición</b>
+                             <!-- {{item.get("adiciones").value | json}} -->
+                            <li style="padding-left: 8px;" class="nav-item" *ngFor="let subitem of item.get('adiciones')!.value; let j = index">
+                               
+                              <i title="Quitar" (click)="removeAdiciones(item, j)" class="bi bi-dash-circle btn" style="color: #af1515; padding: 0px; margin: 0px;"></i> {{subitem.cantidad_adicionar}} - {{subitem.nombre}}
+                            </li>
+                          </ul>
+                        </td>
+                        <td class="p-1" style="width: 65px; min-width: 65px;vertical-align: middle;">
+                          <input class="form-control text-right"
+                            onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                            onkeyup='if (this.value.length > 12 ) this.value ="1"' (keyup)="validateCantidad(item, prds.length - 1 - i)" (click)="validateCantidad(item, prds.length - 1 - i)"
+                            style="
+                              font-size: 11px;
+                              text-align: center;
+                              color: rgb(0, 0, 0);
+                              height: 30px;
+                              width: 100%;
+                            " min="0" type="number" formControlName="cantidad" />
+                        </td>
+                        <td class="p-1" style="width: 100px; min-width: 100px;vertical-align: middle;">
+                          <ng-container *ngIf="item.value.valor_venta_mayor == 0 || item.value.valor_venta_mayor == null">
+                            <input
+                              [attr.disabled]="permisoValorVenta ? null : true"
+                              class="form-control text-right"
+                              onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                              onkeyup='if (this.value.length > 12 ) this.value ="1"'
+                              (keyup)="valor_pagar($event.target.value, item)"
+                              style="
+                                font-size: 11px;
+                                text-align: center;
+                                color: rgb(0, 0, 0);
+                                height: 30px;
+                                width: 100%;
+                              "
+                              inputmode="numeric"
+                              [value]="item.get('valor_venta').value"
+                              min="0"
+                              type="text"
+                            />
+                          </ng-container>
+                          <ng-container *ngIf="item.value.valor_venta_mayor > 0">
+                            <button
+                            (click)="openModalValorVenta(prds.length - 1 - i, item)"
+                            class="form-control text-right"
+                          >
+                            {{ item.get("valor_venta")!.value }}
+                          </button>
+                          </ng-container>
+                          
+                        </td>
+                        <td class="p-1" style="width: 65px; min-width: 65px;vertical-align: middle;">
+                          <button [disabled]="!permisoPorDescuento" (click)="openModalPagar(prds.length - 1 - i, false)" class="form-control text-right">
+                            {{ formatearNumber(
+                              (item.get("descuento")!.value)  ? (item.get("descuento")!.value + '').substring(0,5)  : item.get("descuento")!.value
+                              ) }}
+                          </button>
+                        </td>
+                        <td class="text-right" style="
+                            width: 120px;
+                            min-width: 120px;
+                            font-size: 12px; padding-bottom: 0px;
+                          ">
+                          {{ subtotalItem(item) }} 
+                        </td>
+                        <td class="p-1 text-center" style="width: 35px;vertical-align: middle;">
+
+                          
+                          <button class="btn mr-1" style="padding: 0px; height: 20px;" (click)="deleteProducto(prds.length - 1 - i)" [disabled]="isDisabled" title="Quitar">
+                            <i class="bi bi-trash3" style="color: #af1515"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </tbody>
+                <ng-template #nodata>
+                  <tr>
+                    <td scope="row" colspan="7" class="text-muted" style="vertical-align: middle; padding: 0;">
+                      <h4 class="h4-sin" style="font-size: 15px;">
+                        Sin registros de productos agregados
+                      </h4>
+                    </td>
+                  </tr>
+                </ng-template>
+              </table>
+
+              <table class="table table-bordered" style="color:#000;">
+                <tbody style="background: white;">
+                  <tr class="well">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">Total Bruto:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 14px;" id="subt" class="text-secondary">{{ moneda }}{{ formatearNumber(subTotal) }} </b>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="well">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">
+                        <button class="btn mr-1" style="padding: 0px; height: 20px; margin-top: -5px;" title="Editar"
+                          (click)="openModalDescuentoGeneral()"
+                          >
+                          <i class="bi bi-pencil-square" style="color: #484848"></i>
+                        </button>
+                        Descuento:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 14px;" id="suma_descuento" class="text-secondary">{{ moneda }}{{ formatearNumber(descuento) }}</b>
+                      </div>
+                    </td>
+                  </tr> 
+                  <tr class="well">
+                    <td style="padding: 0.35em; width:70%;">
+                      <div class="text-right font-weight-bold">Impuestos:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 14px;" id="subt" class="text-secondary">{{ moneda }}{{ formatearNumber(subtotalImpuesto) }} </b>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="well">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">Total Compra:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 16px;" id="total" class="text-success text-right">{{ moneda }}{{ formatearNumber((subTotal+subtotalImpuesto - descuento)) }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <table style="width: 100%;">
+              <tbody>
+                <tr *ngIf="subTotal > 0">
+                  <td style="width: 70%;">
+                    <button *ngIf="!isDisabled || isDeleting; else buttonFacturando" style="height: 40px;border-radius: 8px;" type="button"
+                      class="btn btn-primary btn-block btn-sm" (click)="facturar()" [disabled]="isDisabled">
+                      Agregar a la factura
+                    </button>
+                    <ng-template #buttonFacturando>
+                      <button class="btn btn-primary btn-block btn-sm" style="height: 40px;border-radius: 8px;" type="button" disabled>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        Agregando...
+                      </button>
+                    </ng-template>
+                  </td>
+                  <td>
+                    <button style="height: 40px;border-radius: 8px;" type="button" class="btn btn-danger btn-block btn-sm"
+                      (click)="cancelarProductosAgregados()" [disabled]="isDisabled">
+                      Cancelar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+
+          <!-- Tabla de pago -->
+          <form class="content-table1" [formGroup]="formProductoInInvoice" autocomplete="off" *ngIf="factura">
+            <hr />
+            <hr />
+            <p class="font-weight-bold" style="background: #0d549e;
+            color: aliceblue;
+            padding: 5px;">PRODUCTOS CARGADOS</p>
+            <div class="table-responsive">
+              <table class="table table-hover table-striped content-table table-bordered"
+                style="border: 0px; width: 100%">
+                <thead style="background: #48659d2b">
+                  <tr style="color: rgb(44, 44, 44); text-align: center;">
+                    <th class="p-1">Producto</th>
+                    <th class="p-1">Cant</th>
+                    <th class="p-1">Valor</th>
+                    <th class="p-1">% Desc</th>
+                    <th class="p-1">SubTotal</th>
+                    <th class="p-1"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- COMMENT: Se recorre los datos que se obtienen-->
+                  <ng-container formArrayName="prdsInvoice">
+                    <ng-container *ngFor="let item of prdsInvoice.controls; let i = index" [formGroupName]="i">
+                      <tr style="
+                          font-size: 10px;
+                          color: rgb(0, 0, 0);
+                          background-color: #ffffff;
+                          vertical-align: middle;
+                        ">
+                        <td class="p-1" style="vertical-align: middle;">
+                          {{ item.get("nombre")!.value }}
+                        </td>
+                        <td class="p-1" style="width: 65px; min-width: 65px;vertical-align: middle;">
+                          <button [disabled]="!permisoBorrarPrefactura" (click)="openModalPagar(i)" class="form-control text-right">
+                            {{ formatearNumber(item.get("cantidad")!.value) }}
+                          </button>
+                        </td>
+                        <td class="p-1" style="width: 100px; min-width: 100px;vertical-align: middle;">
+                          <button [attr.disabled]="permisoValorVenta ? null : true" (click)="openModalPagar(i)" class="form-control text-right">
+                            {{ formatearNumber(item.get("valor_venta")!.value) }}
+                          </button>
+                        </td>
+                        <td class="p-1" style="width: 65px; min-width: 65px;vertical-align: middle;">
+                          <button [attr.disabled]="permisoValorVenta ? null : true" (click)="openModalPagar(i)" class="form-control text-right">
+                            {{ formatearNumber(item.get("descuento")!.value) }}
+                          </button>
+                        </td>
+                        <td class="text-right" style="
+                            width: 120px;
+                            min-width: 120px;
+                            font-size: 12px; padding-bottom: 0px;
+                          ">
+                          {{
+                          formatearNumber(
+                          item.get("descuento")!.value != null &&
+                          item.get("descuento")!.value >= 0 &&
+                          item.get("descuento")!.value <= 100 ? item.get("valor_venta")!.value *
+                            item.get("cantidad")!.value - (item.get("valor_venta")!.value * item.get("cantidad")!.value
+                            * item.get("descuento")!.value) / 100 : item.get("valor_venta")!.value *
+                            item.get("cantidad")!.value ) }} </td>
+                        <td class="p-1 text-center" style="width: 35px;vertical-align: middle;">
+                          
+                          <button [disabled]="!permisoBorrarPrefactura" class="btn mr-1" (click)="removeProccesedProduct(item)" style="padding: 0px; height: 20px; margin-top: 4;" title="Quitar">
+                            <i class="bi bi-trash3" style="color: #af1515" ></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </tbody>
+              </table>
+              <table class="table table-bordered" style="color:#000;">
+                <tbody style="background: white;">
+                  <tr class="well">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">Subtotal:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 14px;" id="subt" class="text-success">{{ moneda }}{{ formatearNumber(factura?.subtotal) }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="well">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">Descuento:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 14px;" id="suma_descuento" class="text-success">{{ moneda }}{{ formatearNumber(factura?.descuento) }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="well" *ngIf="hasImpuestoBolsa">
+                    <td style="padding: 0.35em; width: 70%">
+                      <div class="text-right font-weight-bold">
+                        Imp. Bolsas ( {{ formProductoInInvoice.get('cantidadBolsa').value }} ):
+                        <span style="display: block; font-size: 0.85em;">Valor: {{valorBolsa}}</span>
+                      </div>
+                      
+                    </td>
+                    <td style="padding: 0.35em; vertical-align: middle;">
+
+                      
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group" role="group" aria-label="Modificar cantidad" style="margin-right: 3px;">
+                          <button type="button" class="btn btn-secondary btn-sm p-0" (click)="decrementCounter()" style="width: 25px; height: 25px;">-</button>
+                          <span style="width: 3px;"></span>
+                          <button type="button" class="btn btn-primary btn-sm p-0" (click)="incrementCounter()" style="width: 25px; height: 25px;">+</button>
+                        </div>
+                        <b
+                          style="font-size: 14px"
+                          class="text-secondary"
+                          >{{ moneda }}{{ formatearNumber( formProductoInInvoice?.get('cantidadBolsa').value * valorBolsa) }}</b
+                        >
+                      </div>  
+                      
+                    </td>
+                  </tr>
+                  <tr class="well">
+                    <td style="padding: 0.35em">
+                      <div class="text-right font-weight-bold">Total Compra:</div>
+                    </td>
+                    <td style="padding: 0.35em">
+                      <div class="text-right">
+                        <b style="font-size: 16px;" id="total" class="text-success text-right">{{ moneda }}{{ formatearNumber(factura?.total) }}</b>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <table style="width: 100%;" *ngIf="factura != null">
+              <tbody>
+                <tr>
+                  <td style="width: 35%;">
+                    <button style="height: 40px;border-radius: 8px;" type="button" class="btn btn-primary btn-block btn-sm" (click)="pagar()"
+                      [disabled]="isDisabled">
+                      Pagar
+                    </button>
+                  </td>
+                  <td style="width: 35%;">
+                    <button style="height: 40px;border-radius: 8px;" type="button" class="btn btn-success btn-block btn-sm" (click)="guardarBolsas()"
+                      [disabled]="isDisabled">
+                      Guardar Bolsas
+                    </button>
+                  </td>
+                  <td>
+                    <button style="height: 40px;border-radius: 8px;" type="button" class="btn btn-danger btn-block btn-sm"
+                      (click)="cancelarProductosAgregados()" [disabled]="isDisabled">
+                      Cancelar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+<app-venta-restaurante-bar-pagar [mesa]="mesa" [precio]="precio" [factura]="factura.id" [propina]="propina"
+  *ngIf="isPaymentVisible" (editEvent)="proccessEditEvent($event)">
+</app-venta-restaurante-bar-pagar>
+
+<!-- MODAL PARA LA GESTION DEL PAGO -->
+<div class="modal fade" bsModal #staticModalCambiar="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sl-size">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h5 id="dialog-static-name" class="modal-title pull-left text-center" style="color: aliceblue">
+          {{ productName }}
+        </h5>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModalPagar()">
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formCambiarInfo" autocomplete="off">
+          <div class="row">
+            <div class="form-group col-md-6" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px">Cantidad</label>
+              <input [readOnly]="isReadOnly" style="font-size: 15px !important;font-weight: bold; text-align: center;" class="form-control rounded text-center;" type="number" min="1" placeholder="Digite La cantidad"
+                formControlName="cantidad"
+                onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                (change)="totalInvoice()" (keyup)="totalInvoice()" />
+              <span class="text-danger font-weight-bold" *ngIf="campoEsValido('cantidad')">Mínimo 1</span>
+            </div>
+            <div class="form-group col-md-6" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px">Valor</label>
+              <input *ngIf="permisoValorVenta; else lblValorVenta" [readOnly]="isReadOnly" [attr.disabled]="permisoValorVenta ? null : true" style="font-size: 15px !important;font-weight: bold;" class="form-control rounded text-right" type="number"
+                min="0" placeholder="Digite El Valor" formControlName="valor"
+                onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                (keyup.enter)="getBuscarClienteEnter($event.target.value)" (change)="totalInvoice()"
+                (keyup)="totalInvoice()" />
+                <ng-template #lblValorVenta>
+                  <label style="font-size: 15px !important;font-weight: bold; background: rgb(233, 236, 239);" class="form-control rounded text-right disabled"
+                   for="">{{ formatearNumber(formCambiarInfo.get('valor').value)}}</label>
+                </ng-template>
+                
+              <span class="text-danger font-weight-bold" *ngIf="campoEsValido('valor')">Mínimo 0</span>
+            </div>
+
+            <div class="form-group col-md-6" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px">Tipo</label>
+              <select [attr.disabled]="permisoValorVenta ? null : true" class="form-control text-center" formControlName="isPorcentaje" style="font-size: 13px !important;font-weight: bold;">
+                <option [ngValue]="true">Porcentaje</option>
+                <option [ngValue]="false">Valor</option>
+              </select>
+            </div>
+
+            <ng-container *ngIf="permisoPorDescuento; else lblPorcentaje">
+              <div *ngIf="formCambiarInfo.get('isPorcentaje').value; else tmplValue" class="form-group col-md-6" style="text-align: center">
+                <label for="" style="font-weight: bold; margin-bottom: 0px">Descuento %</label>
+                <input [attr.disabled]="permisoPorDescuento ? null : true" style="font-size: 13px !important;font-weight: bold; text-align: center !important;" class="form-control rounded text-right" type="number"
+                  min="0" max="100" onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                  onkeyup='if (this.value < 0 || this.value>100) this.value =""' placeholder="Porcentaje Descuento"
+                  formControlName="descuento" (keyup)="descuentoFormatForm()" (change)="descuentoFormatForm()" />
+                <span class="text-danger font-weight-bold" *ngIf="campoEsValido('descuento')">Mínimo 0, Máximo 100</span>
+              </div>
+  
+              <ng-template #tmplValue>
+                <div class="form-group col-md-6" style="text-align: center">
+                  <label for="" style="font-weight: bold; margin-bottom: 0px">Descuento {{ moneda }}</label>
+                  <input [attr.disabled]="permisoPorDescuento ? null : true" style="font-size: 13px !important;font-weight: bold;text-align: center;" class="form-control rounded" type="text"
+                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                     placeholder="Valor Descuento"
+                    formControlName="valorDescuento" (keyup)="descuentoFormatForm(true)" (change)="descuentoFormatForm()" />
+                  <span class="text-danger font-weight-bold" *ngIf="campoEsValido('valorDescuento')">Mínimo 0, Máximo {{subTotalInvoice}}</span>
+                </div>
+              </ng-template>
+            </ng-container>
+            
+            <ng-template #lblPorcentaje>
+              <div *ngIf="formCambiarInfo.get('isPorcentaje').value; else tmplValueLbl" class="form-group col-md-6" style="text-align: center">
+                <label for="" style="font-weight: bold; margin-bottom: 0px">Descuento %</label>
+                <label style="font-size: 15px !important;font-weight: bold; background: rgb(233, 236, 239);" class="form-control rounded text-right disabled"
+                for="">{{ formCambiarInfo.get('descuento').value }}</label>
+              </div>
+              <ng-template #tmplValueLbl>
+                <div class="form-group col-md-6" style="text-align: center">
+                  <label for="" style="font-weight: bold; margin-bottom: 0px">Descuento {{ moneda }}</label>
+                  <label style="font-size: 15px !important;font-weight: bold; background: rgb(233, 236, 239);" class="form-control rounded text-right disabled"
+                for="">{{ formatearNumber(formCambiarInfo.get('valorDescuento').value)}}</label>
+                </div>
+              </ng-template>
+            </ng-template>
+
+            
+          </div>
+
+          <div class="row-fluid">
+            <div  style="text-align: right;">
+              <div>
+                <label class="font-weight-bold">Subtotal:</label>
+                <label class="info-total-product">{{formatearNumber(subTotalInvoice)}}</label>
+              </div>
+
+              <div>
+                <label class="font-weight-bold">Descuento:</label>
+                <label class="info-total-product">{{formatearNumber(descuentoInvoice)}}</label>
+              </div>
+              <div>
+                <label class="font-weight-bold">Total:</label>
+                <label class="info-total-product">{{formatearNumber(totalPagarInvoice)}}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end align-items-center">
+            <button *ngIf="!isReadOnly; else visibleButtonClose" class="btn btn-primary btn-shadow" (click)="updateChangesProduct()">
+              Guardar Cambios
+            </button>
+
+            <ng-template #visibleButtonClose>
+              <button class="btn btn-primary btn-shadow" (click)="closeModalPagar()">
+                Cerrar
+              </button>
+            </ng-template>
+            
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARA LA GESTION DE LA PROPINA -->
+<div class="modal fade" bsModal #staticModalPropina="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog" style="max-width: 300px">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h5 id="dialog-static-name" class="modal-title pull-left text-center" style="color: aliceblue">
+          Digitar Serv. Voluntario
+        </h5>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModalPropina()">
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formPropina" autocomplete="off">
+          <div class="row" >
+
+            <div style="text-align: right !important; margin-bottom: 0px;" class="form-group col-md-6" *ngIf="factura; else valorNoFacturado">
+              <p style="font-size: 16px;">Valor Subtotal: </p>
+            </div>
+            <div style="text-align: right !important; margin-bottom: 0px;" class="form-group col-md-6" *ngIf="factura; else valorNoFacturado">
+              <span style="font-size: 17px;font-weight: bold;">{{formatearNumber(factura?.total)}}</span>
+            </div>
+            <ng-template #valorNoFacturado>
+              <p  style="font-size: 16px;">Valor Subtotal: <br>
+                <span style="font-size: 17px;font-weight: bold;">{{formatearNumber(subTotal)}}</span></p>
+              
+            </ng-template>
+
+            <div style="text-align: right !important;" class="form-group col-md-6">
+              <p style="font-size: 14px;">Valor Serv. Voluntario: </p>
+            </div>
+            <div style="text-align: right !important;" class="form-group col-md-6">
+              <span style="font-size: 15px;font-weight: bold;">{{ formatearNumber(formPropina.value.valor_propina) }}</span>
+            </div>
+
+            <div class="form-group col-md-6" style="text-align: center;">
+              <label for="" style="font-weight: bold; margin-bottom: 0px">Tipo</label>
+              <select class="form-control text-center" formControlName="isPorcentaje">
+                <option [ngValue]="true">Porcentaje</option>
+                <option [ngValue]="false">Valor</option>
+              </select>
+            </div>
+
+            <div *ngIf="this.formPropina.value.isPorcentaje; else mostrarValor" class="form-group col-md-6" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px">% Porcentaje</label>
+              <input class="form-control rounded text-center"
+              (keyup)="propinaFormatForm()"
+              (click)="propinaFormatForm()"
+                onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;" min="0"
+                maxlength="12" type="number" formControlName="porcentaje" />
+            </div>
+            <ng-template #mostrarValor>
+              <div  class="form-group col-md-6" style="text-align: center">
+                <label for="" style="font-weight: bold; margin-bottom: 0px">{{ moneda }} valor</label>
+                <input class="form-control rounded text-center"
+                  onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;" min="0"
+                  maxlength="12" type="number" formControlName="valor_propina" placeholder="0"/>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end align-items-center">
+            <button class="btn btn-primary btn-shadow" (click)="updatePropina()">
+              Guardar Serv. Voluntario
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para hacer nota a la factura -->
+<div class="modal fade" bsModal #staticModalNota="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lgx">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h4 id="dialog-static-name" class="modal-title pull-left" style="color: aliceblue">
+          Nota En La Mesa: {{ mesaAtendida }}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModalNota()">
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formNota" autocomplete="off">
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="" style="font-weight: bold; margin-bottom: 0px; font-size: 14px;">Nota Para La Mesa</label>
+              <textarea class="form-control rounded" formControlName="mesa" placeholder="Ingrese la nota de la mesa"
+                name="" id="" rows="5" style="font-size: 16px !important;"></textarea>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="" style="font-weight: bold; margin-bottom: 0px; font-size: 14px;">Nota Para La Factura</label>
+              <textarea class="form-control rounded" formControlName="factura"
+                placeholder="Ingrese la nota de la factura" name="" id="" rows="5" style="font-size: 16px !important;"></textarea>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end align-items-center">
+            <button (click)="saveNotes()" class="btn btn-primary btn-shadow">Guardar Notas</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal caracterizaciones de productos -->
+<div class="modal fade" bsModal #staticModalCaracterizaciones="bs-modal" [config]="{ backdrop: 'static' }" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h5 id="dialog-static-name" class="modal-subtitle pull-left" style="color: aliceblue">
+          Caracterizaciones
+        </h5>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeModalCaracterizaciones()">
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+ <div class="modal-body" style="padding: 0px;">
+  <form [formGroup]="formCheckeds" autocomplete="off">
+
+   <table class="table my-table" style="width: 98%;">
+
+  <!--  Mostrar SOLO si hay características -->
+  <tr *ngIf="caracteristicas && caracteristicas.length > 0">
+    <!-- Selección única o múltiple -->
+    <td class="align-middle border-end section-label text-center" 
+        style="width: 180px; background: rgb(228, 240, 251)">
+      {{ this.productSelected?.unico ? 'Selección única' : 'Selección múltiple' }}
+    </td>
+
+    <td class="p-3">
+      <div class="options-grid">
+        <ng-container formArrayName="caracteristicas">
+          <ng-container *ngFor="let item of caracteristicas.controls; let i = index" [formGroupName]="i">
+            <button class="btn border form-control text-wrap" [title]="'Agregar una caracteristica a tener encuenta en la preparación: '+ item.get('detalle')!.value"
+              [ngStyle]="{
+                'background-color': item.get('checked').value ? '#48659d2b' : 'white',
+                'text-transform': 'uppercase'
+              }"
+              style="height: auto; cursor: pointer; padding: 7px;"
+              (click)="activeItem(i)">
+              {{ item.get('detalle')!.value }}
+            </button>
+          </ng-container>
+        </ng-container>
+      </div>
+    </td>
+  </tr>
+
+  <!--  Mostrar SOLO si hay adiciones -->
+  <tr>
+    <td  *ngIf="adiciones && adiciones.length > 0" class="align-middle border-end section-label text-center" style="background: aliceblue">
+     <label>Adiciones</label>
+    </td>
+
+    <td class="p-3">
+      <div class="options-grid">
+        <ng-container formArrayName="adiciones">
+          <ng-container *ngFor="let item of adiciones.controls; let i = index" [formGroupName]="i">
+            <div class="modifier-button-final">
+              <div title="Quitar adición" class="delete-section-final" (click)="deleteAdiciones(i)">
+                <i class="bi bi-trash-fill delete-icon-final"></i>
+              </div>
+
+              <div   [title]="'Agregar a la preparación una adición de ' + item.get('nombre')!.value"
+                class="text-section-final text-wrap"
+                [ngStyle]="{
+                  'background-color': item.get('checked').value ? '#48659d2b' : 'white'
+                }"
+                style="height: auto; cursor: pointer; user-select: none;"
+                (click)="activeItemAdiciones(i)"
+              >
+                <span>
+                  {{ item.get('nombre')!.value.length > 15 
+                    ? (item.get('nombre')!.value | slice:0:15) + '...' 
+                    : item.get('nombre')!.value }}
+                </span>
+              </div>
+
+              <div class="quantity-section-final">
+                {{ item.get('cantidad_adicionar')!.value }}
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </td>
+  </tr>
+</table>
+
+
+    <!-- Botón continuar -->
+    <div class="d-flex justify-content-end align-items-center mt-3" style="padding: 10px;">
+      <button (click)="saveSelectedCaracteristicas()" class="btn btn-primary btn-shadow">Continuar</button>
+    </div>
+
+  </form>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL PARA LA GESTION DEL VALOR DE VENTA -->
+<div
+  class="modal fade"
+  bsModal
+  #staticModalValorVenta="bs-modal"
+  [config]="{ backdrop: 'static' }"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-static-name"
+>
+  <div class="modal-dialog modal-sm-size">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h5
+          id="dialog-static-name"
+          class="modal-title pull-left text-center"
+          style="color: aliceblue"
+        >
+          {{ productName }}
+        </h5>
+        <button
+          type="button"
+          class="close pull-right"
+          aria-label="Close"
+          (click)="closeModalValorVenta()"
+        >
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formValorVenta" autocomplete="off">
+          <div class="row">
+            <div
+              class="form-group col-md-12"
+              style="text-align: center"
+            >
+              <label for="" style="font-weight: bold; margin-bottom: 0px"
+                >Valor Venta</label
+              >
+              <input
+                [attr.disabled]="permisoPorDescuento ? null : true"
+                class="form-control rounded text-right"
+                onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                onkeyup='if (this.value.length > 12 ) this.value ="1"'
+                style="
+                  font-size: 11px;
+                  text-align: center;
+                  color: rgb(0, 0, 0);
+                  height: 30px;
+                  width: 100%;
+                  "
+                inputmode="numeric"
+                (keyup)="valor_pagar($event.target.value, itemSelected)"
+                [value]="itemSelected?.get('valor_venta').value"
+                min="0"
+                type="text"
+              />
+              <span
+                class="text-danger font-weight-bold"
+                *ngIf="campoEsValido('descuento')"
+                >Mínimo 0, Máximo 100</span
+              >
+            </div>
+
+            <div class="form-group col-md-12" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px"
+                >Al Detal</label
+              >
+              <button
+              style="background-color: rgba(72, 101, 157, 0.17) !important;"
+               (click)="establecerValorVenta(formValorVenta.get('valor_detal').value)" for=""
+                class="btn form-control rounded text-right border">{{
+                formatearNumber(formValorVenta.get("valor_detal").value)
+              }}</button>
+            </div>
+
+            <div class="form-group col-md-12" style="text-align: center">
+              <label for="" style="font-weight: bold; margin-bottom: 0px"
+                >Por Mayor</label
+              >
+              <button
+              style="background-color: rgba(72, 101, 157, 0.17) !important;" 
+              (click)="establecerValorVenta(formValorVenta.get('valor_mayor').value)" for="" 
+              class="btn form-control rounded text-right border">{{
+                formatearNumber(formValorVenta.get("valor_mayor").value)
+              }}</button>
+            </div>           
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end align-items-center">
+            <button
+              class="btn btn-primary btn-lg btn-shadow"
+              (click)="closeModalValorVenta()"
+            >
+              Cerrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div
+  class="modal fade"
+  bsModal
+  #staticModalDescuentoGeneral="bs-modal"
+  [config]="{ backdrop: 'static' }"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-static-name"
+>
+  <div class="modal-dialog modal-sm-size">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h4
+          id="dialog-static-name"
+          class="modal-title pull-left text-center"
+          style="color: aliceblue"
+        >
+          Descuento general de la factura
+        </h4>
+        <button
+          type="button"
+          class="close pull-right"
+          aria-label="Close"
+          (click)="closeModalDescuentoGeneral()"
+        >
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formDescuentoGeneral" autocomplete="off">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label for="" style="font-weight: bold; margin-bottom: 0px"
+                >Tipo</label
+              >
+              <select
+                class="form-control text-right"
+                formControlName="isPorcentaje"
+              >
+                <option [ngValue]="true">Porcentaje</option>
+                <option [ngValue]="false">Valor</option>
+              </select>
+            </div>
+
+            <div
+              *ngIf="formDescuentoGeneral.get('isPorcentaje').value; else tmplValueDescuentoGeneral"
+              class="form-group col-md-6"
+              style="text-align: center"
+            >
+              <label for="" style="font-weight: bold; margin-bottom: 0px"
+                >Descuento %</label
+              >
+              <input
+                [attr.disabled]="permisoPorDescuento ? null : true"
+                class="form-control rounded text-right"
+                type="number"
+                min="0"
+                max="100"
+                onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                onkeyup='if (this.value < 0 || this.value>100) this.value =""'
+                placeholder="Porcentaje Descuento"
+                formControlName="descuento"
+                (keyup)="calcularDescuento()"
+                (change)="calcularDescuento()"
+              />
+              <span
+                class="text-danger font-weight-bold"
+                *ngIf="campoEsValidoFormDescuentoGeneral('descuento')"
+                >Mínimo 0, Máximo 100</span
+              >
+            </div>
+
+            <ng-template #tmplValueDescuentoGeneral>
+              <div class="form-group col-md-6" style="text-align: center">
+                <label for="" style="font-weight: bold; margin-bottom: 0px"
+                  >Descuento {{ moneda }}</label
+                >
+                <input
+                  [attr.disabled]="permisoPorDescuento ? null : true"
+                  class="form-control rounded text-right"
+                  type="text"
+                  onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                  placeholder="Valor Descuento"
+                  formControlName="valorDescuento"
+                  (keyup)="calcularDescuento(true)"
+                  (change)="calcularDescuento(true)"
+                />
+                <span
+                  class="text-danger font-weight-bold"
+                  *ngIf="campoEsValidoFormDescuentoGeneral('valorDescuento')"
+                  >Mínimo 0, Máximo {{ subTotalInvoice }}</span
+                >
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="row-fluid">
+            <div align="right">
+              <div>
+                <label class="font-weight-bold">Subtotal:</label>
+                <label class="info-total-product">{{
+                  formatearNumber(subTotal)
+                }}</label>
+              </div>
+
+              <div>
+                <label class="font-weight-bold">Descuento:</label>
+                <label class="info-total-product">{{
+                  formatearNumber(descuento)
+                }}</label>
+              </div>
+              <div>
+                <label class="font-weight-bold">Total:</label>
+                <label class="info-total-product">
+                  {{ moneda }}{{ formatearNumber(subTotal+subtotalImpuesto - descuento) }}
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 d-flex justify-content-end align-items-center">
+            <button
+              class="btn btn-primary btn-lg btn-shadow"
+              (click)="closeModalDescuentoGeneral()"
+            >
+              Cerrar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<app-venta-restaurante-bar-cambiar-mesa [mesa]="mesa" *ngIf="isChangeTableVisible"
+  (editEvent)="proccessChangeEditEvent($event)"></app-venta-restaurante-bar-cambiar-mesa>
+
+
+  <ng-template #loading>
+    <img
+      src="../../../../../assets/logos/Loading-Puvesoft.gif"
+      style="width: 6rem; height: 6rem; margin-left: 45%; margin-top: 10%"
+    />
+  </ng-template>

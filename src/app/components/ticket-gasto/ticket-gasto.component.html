@@ -1,0 +1,261 @@
+<!-- MODAL PARA LA GESTION DEL PAGO -->
+<div
+  class="modal fade"
+  bsModal
+  #staticModalPagar="bs-modal"
+  [config]="{ backdrop: 'static' }"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-static-name"
+>
+  <div class="modal-dialog" style="min-width: 80% !important; display: none;">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e; padding: 15px">
+        <h4
+          id="dialog-static-name"
+          class="modal-title pull-left"
+          style="color: aliceblue"
+        >
+          Información de pago
+        </h4>
+        <div class="d-flex">
+          <button
+            type="button"
+            class="close"
+            aria-label="Close"
+            (click)="closeModalPagar()"
+          >
+            <span aria-hidden="true" style="color: aliceblue">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-secondary" (click)="imprimir()">Imprimir</button>
+        <div
+          #print_ticket
+          id="print_ticket"
+          [ngStyle]="{
+            'max-width': anchoTicket +'px',
+            'font-size': sizeLetraTicket+'px'
+          }"
+          style="
+            font-style: normal;
+            line-height: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+          "
+        >
+          <!-- Sucursal -->
+
+          <table
+            style="
+              width: 100%;
+              font-family: 'Arial';
+            "
+          >
+            <tr>
+              <td style="text-align: center">
+                <h4 style="text-align: center">GASTO</h4>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align: center">
+                <h3
+                 style="text-align: center; margin-bottom: 5px;">{{ sucursal?.nombre }}</h3>
+              </td>
+            </tr>
+            <tr *ngIf="sucursal?.logo">
+              <td 
+              style="text-align: center;"><img src="{{sucursal?.logo}}" alt="Puvesoft" /></td>
+            </tr>
+            <tr *ngIf="sucursal?.nit">
+              <td 
+              [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              "
+              style="text-align: center">
+                <span>{{ sucursal?.nit }}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              "
+              style="text-align: center">
+                <span>{{ sucursal?.direccion }} - {{sucursal?.telefono}}</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              "
+              style="text-align: center;">
+                <span
+                  >{{ sucursal?.departamento }} -
+                  {{ sucursal?.municipio }}</span
+                >
+              </td>
+            </tr>
+
+            <tr *ngIf="sucursal?.regimen">
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              "
+               style="text-transform: capitalize; text-align: center;">
+               {{ sucursal?.regimen }}
+              </td>
+            </tr>
+
+          </table>
+
+          <table
+            style="
+              width: calc(100% - 35px);
+              margin-top: 15px;
+              font-family: 'Arial';
+            "
+          >
+          
+            <tr>
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              ">
+                <span style="font-weight: bolder; text-align: center"
+                  >CATEGORIA DEL GASTO: </span
+                >
+                <span>{{ data?.categoria_gasto }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              ">
+                <span style="font-weight: bolder; text-align: center"
+                  >PROVEEDOR: </span
+                >
+                <span>{{ data?.nombre_proveedor }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              ">
+                <span style="font-weight: bolder; text-align: center"
+                  >RESPONSABLE: </span
+                >
+                <span>{{ data?.nombre_usuario }}</span>
+              </td>
+            </tr>
+          </table>
+
+          <table
+            style="
+              width: 100%;
+              margin-top: 15px;
+              font-family: 'Arial';
+            "
+          >
+            <thead>
+              <tr>
+                <th [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: left;">FECHA</th>
+                <th [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: right;">DESCRIPCIÓN</th>
+                <th [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: right;">VALOR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr >
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              ">{{ data?.fecha | date:'y-MM-d h:mm:ss a' }}</td>
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " >{{ data?.descripcion }}</td>
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " *ngIf="canShowTotals" style="text-align: right;">
+                  {{ formatearNumber(data.valor) }}
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td style="text-align: right;font-weight: bold;" [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " colspan="2">TOTAL GASTO</td>
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: right;font-weight: bold;">{{formatearNumber(data?.valor)}}</td>
+              </tr>
+              <tr>
+                <td style="text-align: right;font-weight: bold;" [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " colspan="2">METODO PAGO</td>
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: right;font-weight: bold;">{{data?.metodo_pago}}</td>
+              </tr>
+              <tr *ngIf="data?.metodo_pago=='EFECTIVO'">
+                <td style="text-align: right;font-weight: bold;" [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " colspan="2">SACADO DE CAJA</td>
+                <td [ngStyle]="{
+                'font-size': sizeLetraTicket+'px'
+              }
+              " style="text-align: right;font-weight: bold;">{{data?.egreso_de_caja}}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="text-align: center; margin-top: 8px; font-family: Arial;">
+            <p
+              style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              "
+            >
+            Generado por {{nameSite}}
+            </p>
+            <p  *ngIf="ticket?.facturaVenta?.estado_id != 2"
+              style="
+                font-size: 9px;
+                padding: 0 !important;
+                margin: 0 !important;
+              "
+            >
+            Visítanos {{website}} | Cel: {{phone}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

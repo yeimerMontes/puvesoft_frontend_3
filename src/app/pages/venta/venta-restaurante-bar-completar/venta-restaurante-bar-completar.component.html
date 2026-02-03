@@ -1,0 +1,477 @@
+<div class="row" *ngIf="factura != null; else loading">
+  <div class="col-md-6">
+    <div class="alert alert-primary" role="alert">
+      <h3 class="text-center" *ngIf="factura?.estado_id != 2; else noCompleted">Proceso de facturación terminado</h3>
+      <ng-template #noCompleted>
+      <h3 class="text-center">Productos agregados
+        exitosamente</h3>
+      </ng-template>
+    </div>
+
+    <table class="table" *ngIf="showInformationInvoice">
+      
+
+      <!-- PROPINA -->
+      <!-- <tr *ngIf="factura.propina != null && factura.propina > 0">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+            margin-bottom: 0px;"
+          ><strong class="text-info">Propina</strong></pre>
+        </td>
+      </tr>
+      <tr *ngIf="factura.propina != null && factura.propina > 0">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+            margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(factura?.propina)}}</strong></pre>
+        </td>
+      </tr> -->
+
+       <!-- DOMICILIO -->
+       <!-- <tr
+       *ngIf="domicilio"
+     >
+       <td style="padding-bottom: 7px;
+       padding-top: 7px;">
+         <pre
+           style="font-size: 18px;
+             margin-bottom: 0px;"
+         ><strong class="text-info">Domicilio</strong></pre>
+       </td>
+     </tr>
+     <tr
+     *ngIf="domicilio"
+     >
+       <td style="padding-bottom: 7px;
+       padding-top: 7px;">
+         <pre
+           style="font-size: 18px;
+             margin-bottom: 0px;"
+         ><strong>$ {{formatearNumber(domicilio)}}</strong></pre>
+       </td>
+     </tr> -->
+
+      <!-- TOTAL A PAGAR -->
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total a Pagar</strong></pre>
+        </td>
+      </tr>
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+            margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(total - (data?.facturaVenta?.total_retencion ?? 0) )}}</strong></pre>
+        </td>
+      </tr>
+
+      
+
+      <!-- DINERO RECIBIDO -->
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Dinero Recibido</strong></pre>
+        </td>
+      </tr>
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(factura?.efectivo)}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- CAMBIO -->
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Cambio</strong></pre>
+        </td>
+      </tr>
+      <tr *ngIf="factura.metodo_pago_id != 10">
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(factura?.cambio)}}</strong></pre>
+        </td>
+      </tr>
+
+     <!-- TOTAL EFECTIVO -->
+     <tr
+     *ngIf="
+       (factura.metodo_pago_id == 10 && existePagoCombinado(1))
+     "
+   >
+     <td style="padding-bottom: 7px;
+     padding-top: 7px;">
+       <pre
+         style="font-size: 18px;
+           margin-bottom: 0px;"
+       ><strong class="text-info">Total Efectivo</strong></pre>
+     </td>
+   </tr>
+   <tr
+     *ngIf="
+       (factura.metodo_pago_id == 10 && existePagoCombinado(1))
+       
+     "
+   >
+     <td style="padding-bottom: 7px;
+     padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+       <pre
+         style="font-size: 18px;
+           margin-bottom: 0px;"
+       ><strong>{{formatearNumber(pagoCombinado(1))}}</strong></pre>
+     </td>
+     
+   </tr>
+
+      
+
+      <!-- CRÉDITO -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(2))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Crédito</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(2))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(2))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- TRANSFERENCIA BANCARIA -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(3))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+        ><strong class="text-info">Total Transferencia Bancaria</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(3))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(3))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- BANCOLOMBIA -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(4))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Bancolombia</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(4))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(4))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- BANCOLOMBIA A LA MANO -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(5))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Bancolombia a la Mano</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(5))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(5))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- DAVIVIENDA -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(6))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Davivienda</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(6))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(6))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- DAVIPLATA -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(7))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Daviplata</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(7))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>{{formatearNumber(pagoCombinado(7))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- NEQUI -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(8))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Nequi</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(8))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(pagoCombinado(8))}}</strong></pre>
+        </td>
+      </tr>
+
+      <!-- DATÁFONO -->
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(9))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong class="text-info">Total Datáfono</strong></pre>
+        </td>
+      </tr>
+      <tr
+        *ngIf="
+          (factura.metodo_pago_id == 10 && existePagoCombinado(9))
+        "
+      >
+        <td style="padding-bottom: 7px;
+        padding-top: 7px;" *ngIf="factura.metodo_pago_id == 10">
+          <pre
+            style="font-size: 18px;
+              margin-bottom: 0px;"
+          ><strong>$ {{formatearNumber(pagoCombinado(9))}}</strong></pre>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-6">
+    <div>
+      
+      <button
+        class="btn btn-success btn-block rounded p-3 font-weight-bold"
+        style="font-size: 18px"
+        [disabled]="showTicket"
+        (click)="imprimirTicket()"
+      >
+        Imprimir Ticket
+        <br />
+        <span *ngIf="!isPaidInvoice; else emptyZone">En proceso</span>
+      </button><br>
+      
+   
+      <button
+        class="btn btn-success btn-block rounded p-3 font-weight-bold"
+        style="font-size: 18px"
+        [disabled]="showTicketCarta"
+        (click)="imprimirTicketCarta()"
+      >
+        Imprimir Tamaño Carta
+        <br />
+        <span *ngIf="!isPaidInvoice; else emptyZone">En proceso</span>
+      </button>
+      
+    </div>
+    <ng-template #emptyZone> No. {{ codigo }} </ng-template>
+    <div class="mt-5" *ngIf="factura?.estado_id == 2">
+      <button
+        class="btn btn-info btn-block rounded p-3 font-weight-bold"
+        style="font-size: 18px"
+        [disabled]="showTicket"
+        (click)="imprimirComanda()"
+      >
+        Imprimir Comanda
+        <br />
+        <span *ngIf="!isPaidInvoice; else emptyZone">En proceso</span>
+      </button>
+    </div>
+    <div class="mt-5">
+      <button
+        class="btn btn-secondary btn-block rounded p-3 font-weight-bold"
+        style="font-size: 18px"
+        (click)="returnZones()"
+      >
+        Realizar
+        <br />
+        Más Ventas
+      </button>
+    </div>
+    <div class="mt-5">
+      <button
+        *ngIf="!isPaidInvoice"
+        (click)="openModalPayment(mesa, factura.id, precio)"
+        class="btn btn-primary btn-block rounded p-3 font-weight-bold"
+        style="font-size: 18px"
+      >
+        Pagar
+        <br />
+        Factura
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-ticket
+  *ngIf="showTicket"
+  (editEvent)="closeTicket($event)"
+  [id]="idInvoice"
+  [type]="type"
+  [isOpenAlways]="false"
+  [canShowTotals]="canShowTotals"
+>
+</app-ticket>
+
+<app-ticket_venta_carta
+  *ngIf="showTicketCarta"
+  (editEvent)="closeTicketCarta($event)"
+  [id]="idInvoice"
+  [type]="type"
+  [isOpenAlways]="false"
+  [canShowTotals]="canShowTotals"
+>
+</app-ticket_venta_carta>
+
+
+<app-venta-restaurante-bar-pagar
+  [mesa]="mesa"
+  [precio]="precio"
+  [factura]="idFactura"
+  [propina]="propina"
+  *ngIf="isPaymentVisible"
+  (editEvent)="proccessEditEvent($event)"
+  (reloadEvent)="reloadEditEvent($event)"
+>
+</app-venta-restaurante-bar-pagar>
+
+<ng-template #loading>
+  <img src="../../../../../assets/logos/Loading-Puvesoft.gif" style="width: 6rem; height: 6rem; margin-left: 45%; margin-top: 10%"/>
+</ng-template>

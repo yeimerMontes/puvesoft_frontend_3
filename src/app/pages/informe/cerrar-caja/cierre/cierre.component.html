@@ -1,0 +1,35 @@
+<div class="row justify-content-center">
+    <div class="card col-md-4">
+        <div class="card-body text-center">
+            <h3 class="mb-4">CIERRE DE CAJA</h3>
+            <form [formGroup]="form">
+                <div class="form-group">
+                    <label style="font-weight: bold; font-size: 12px">Fecha</label><br />
+                    <input type="date" class="form-control rounded" formControlName="fecha" style="font-size: 14px !important; text-align: center;"
+                        aria-label="Search" aria-describedby="search-addon" />
+                </div>
+                <div class="form-group">
+                    <label style="font-weight: bold; font-size: 12px">Valor Cierre</label><br />
+                    <input (keyup)="valor_pagar($event.target.value)"
+                    onKeypress="if (event.keyCode < 46 || event.keyCode > 57) event.returnValue = false;"
+                    [value]="form.get('valor_cierre').value" type="text" inputmode="numeric"
+                     class="form-control rounded" formControlName="valor_cierre" 
+                     style="font-size: 24px !important; height: 50px; text-align: center;"
+                     aria-label="Search" aria-describedby="search-addon" placeholder="Ingrese valor"/>
+                </div>
+                <button class="btn btn-success" [disabled]="disabled" (click)="addCierreCaja()"
+                style="height: 35px;border-radius: 10px;font-size: 14px; font-weight: bold;">
+                Guardar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<app-ticket-caja
+*ngIf="showTicket"
+(editEvent)="closeTicket($event)"
+[id]="idCierre"
+[type]="1"
+[showInitial]="true"
+>
+</app-ticket-caja>

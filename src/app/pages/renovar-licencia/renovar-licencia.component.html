@@ -1,0 +1,14 @@
+<div class="alert alert-danger" role="alert" *ngIf="dia_vencimiento < 0">
+  Su licencia ha vencido <b>{{ dia_vencimiento }}</b> días, lo invitamos a
+  renovar a través de nuestros canales de atención...
+</div>
+
+<div class="alert alert-primary" role="alert" *ngIf="dia_vencimiento == 0">
+  Su licencia vence Hoy, lo invitamos a renovar a través de nuestros canales
+  de atención...
+</div>
+
+<div class="alert alert-primary" role="alert" *ngIf="dia_vencimiento <=7 && dia_vencimiento>0">
+  Está a <b>{{dia_vencimiento}}</b> día(s) de vencer su licencia, lo invitamos a renovar a través de de nuestros canales
+  de atención...
+</div>

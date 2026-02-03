@@ -1,0 +1,111 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px;
+}
+
+.label-left,
+.label-right {
+  flex: 0 0 auto;
+}
+
+/* Estilos personalizados: Contenedor principal */
+.modifier-button-final {
+  display: flex;
+  width: 250px; /* Un poco más compacto */
+  border-radius: 0.5rem; /* Bordes un poco menos redondeados */
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  /* Se establece una altura fija mínima para garantizar uniformidad, si fuera necesario,
+               pero es mejor dejar que el padding la defina. */
+}
+
+/* Base para las 3 secciones: Centrado vertical y reducción de altura */
+.delete-section-final,
+.text-section-final,
+.quantity-section-final {
+  display: flex;
+  align-items: center; /* **Clave para el centrado vertical** */
+  /* Se reduce el padding vertical (0.4rem) para una altura menor */
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+/* 1. Bloque de Eliminación (Ícono) */
+.delete-section-final {
+  flex-shrink: 0;
+  background-color: white;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid #d3d3d3;
+}
+
+/* Estilo para el ícono de basura (ROJO) */
+.delete-icon-final {
+  color: #e94051;
+  font-size: 1.1rem; /* Tamaño de ícono reducido para menor altura */
+}
+
+/* 2. Bloque Morado (Texto) */
+.text-section-final {
+  flex-grow: 1;
+  background-color: #ffffff;
+  padding-left: 0.55rem;
+  padding-right: 0.55rem;
+  font-size: 0.75rem; /* Tamaño de fuente ligeramente reducido */
+  justify-content: center;
+}
+
+/* 3. Bloque Blanco (Cantidad) */
+.quantity-section-final {
+  flex-shrink: 0;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  font-size: 0.75rem; /* Tamaño de fuente ligeramente reducido */
+  padding-left: 0.55rem;
+  padding-right: 0.55rem;
+  justify-content: center;
+  border-left: 1px solid #d3d3d3;
+}
+
+
+
+.section-label {
+    font-weight: bold;
+    background-color: #f8faff;
+    vertical-align: top;
+    padding: 15px;
+  }
+
+  /* Grid general */
+ .options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .options-grid {
+    grid-template-columns: 1fr; /* En pantallas pequeñas, una sola columna */
+  }
+}
+
+  .my-table tr {
+  border-bottom: 5px solid rgb(228, 240, 251); /* línea separadora */
+}
+
+.my-table tr:last-child {
+  border-bottom: none; /* quita la línea del último */
+}
+
+  
+
+
+
+
+

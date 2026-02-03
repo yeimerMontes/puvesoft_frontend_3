@@ -1,0 +1,128 @@
+<div class="row" *ngIf="loaded; else loading">
+  <div class="col-12 ">
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="mb-4" style="font-weight: bold;">Configuración del sistema de puntos</h5>
+
+        <form [formGroup]="form"><!-- {{form.value|json}} -->
+          <div class="form-row">
+            
+            <div class="form-group col-md-3" style="text-align: center;align-self: center;">
+              <img
+                src="/assets/img/programaFidelizacion.png"
+                rounded alt="Center Rounded image" width="100%" height="100%" />
+            </div>
+
+            <div class="form-row col-md-9" style="padding-right: 0px;">
+
+            <div class="form-group col-md-12" style="padding-right: 5px; padding-left: 5px;">
+            </div>
+            <div class="form-group col-md-5" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputAddress" style="font-weight: 700;">Nombre del sistema</label>
+              <input type="text" class="form-control mb-1" style="text-transform: uppercase;"  placeholder="Nombre del sistema de puntos"
+                formControlName="nombre">
+              <span *ngIf="campoEsValido('nombre')" style="background: #ffffff00;" class="alert-danger rounded px-2">*El nombre es requerido</span>
+            </div>
+          </div>
+
+          
+          <div class="form-group col-md-3">
+            
+          </div>
+
+          <div class="form-row col-md-9" style="padding-right: 0px;border-top: outset;">
+            <div class="col-md-12" style="margin-left: -10px;padding-top: 10px;">
+              <h6 class="mb-4" style="color: #375c9de6;" >- Configuración de puntos</h6></div>
+
+            <div class="form-group col-md-4" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputAddress" style="font-weight: 700;">Valor a comprar</label>
+              <input type="text" class="form-control mb-1"  placeholder="ejemplo: 10.000"
+                formControlName="valor_comprar">
+              <span>Valor de compra para obsequiar puntos</span><br>
+              <span *ngIf="campoEsValido('valor_comprar')" style="background: #ffffff00;" class="alert-danger rounded px-2">*El valor a comprar es requerido</span>
+            </div>
+            <div class="form-group col-md-4" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputAddress" style="font-weight: 700;">Puntos obsequiados por compra</label>
+              <input type="text" class="form-control mb-1"  placeholder="ejemplo: 10.000"
+                formControlName="punto_obsequio">
+              <span>Este es el valor obsequiado por cada compra</span><br>
+              <span *ngIf="campoEsValido('punto_obsequio')" style="background: #ffffff00;" class="alert-danger rounded px-2">*El puntos obsequiados por compra es requerido</span>
+            </div>
+            <div class="form-group col-md-4" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputAddress" style="font-weight: 700;">Valor por punto al momento de redimir</label>
+              <input type="text" class="form-control mb-1"  placeholder="ejemplo: 10.000"
+                formControlName="valor_punto">
+              <span>Este es el valor equivalente a un punto acomulado</span><br>
+
+              <span *ngIf="campoEsValido('valor_punto')" style="background: #ffffff00;" class="alert-danger rounded px-2">*El valor es requerido</span>
+            </div>
+            <div class="form-group col-md-4" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputAddress" style="font-weight: 700;">Compra minima para acumular puntos</label>
+              <input type="text" class="form-control mb-1"  placeholder=""
+                formControlName="compra_minima">
+              <span>Aplica solo para clientes nuevos</span><br>
+
+              <span *ngIf="campoEsValido('compra_minima')" style="background: #ffffff00;" class="alert-danger rounded px-2">*compra minima es requerida</span>
+            </div>
+            <div class="form-group col-md-4" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputDep" style="font-weight: 700;">Tiempo de caducidad</label>
+  
+              <select required class="form-control mb-1" formControlName="caducidad">
+                <option disabled selected value="">SELECCIONAR...</option>
+                <option *ngFor="let item of caducidades" [value]="item.id">
+                  {{ item.nombre }}
+                </option>
+              </select>
+              <span>Este es el tiempo limite para redimir los puntos</span><br>
+
+  
+              <span *ngIf="campoEsValido('caducidad')" style="background: #ffffff00;" class="alert-danger px-2 rounded">*Usar decimales es
+                requerido</span>
+            </div>
+
+            <div class="form-group col-md-2" style="padding-right: 5px; padding-left: 5px;">
+              <label for="inputDep" style="font-weight: 700;">Estado</label>
+  
+              <select required class="form-control mb-1 rounded" id="inputDep" formControlName="estado">
+                <option disabled selected value="">SELECCIONAR...</option>
+                <option value="1">ACTIVO</option>
+                <option value="2">NO ACTIVO</option>
+              </select>
+  
+              <span *ngIf="campoEsValido('estado')" style="background: #ffffff00;" class="alert-danger px-2 rounded">*el impuesto es
+                requerido</span>
+            </div>
+            
+
+          </div>
+            
+          </div>
+          <div class="row w-100 align-items-center">
+            <div class="col text-right"><br>
+
+              <button type="submit" class="btn btn-primary btn-lg btn-shadow" [disabled]="form.invalid"
+              (click)="click()"
+                >
+                Guardar
+              </button>
+
+              <!-- <button  class="btn btn-primary regular-button"> Actualizar </button> -->
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+
+
+
+  </div>
+</div>
+
+<ng-template #loading>
+ <div class="text-center">  <img src="./assets/logos/Loading-Puvesoft.gif"
+    style="width: 6rem; height: 6rem;  margin-top: 10%" />
+</div>
+</ng-template>

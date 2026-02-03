@@ -1,0 +1,879 @@
+<!-- Membrete -->
+<ng-container *ngIf="!(estadoVentaMetodoPago || estadoVentaMesa)">
+  <table
+    style="
+      width: 80%;
+      border: 0px solid #000;
+      text-align: center;
+      font-family: Tahoma, Helvetica, sans-serif;
+      margin-left: auto;
+      margin-right: auto;
+    "
+  >
+    <tr style="text-transform: uppercase">
+      <td>
+        <ng-container *ngIf="sucursal.logo != '' && sucursal.logo != null"
+          ><img style="width: 190px" src="{{ sucursal.logo }}"
+        /></ng-container>
+      </td>
+      <td style="text-align: center; font-size: 14px; color: #353535">
+        <b [innerHTML]="title"></b><br />
+        <ng-container *ngIf="fecha_inicial && fecha_final">
+          <p style="font-size: 12px; font-family: Arial, Helvetica, sans-serif">
+            <b>DESDE: </b>
+            <time>{{ fecha_inicial | date : "dd-MM-yyyy" }}</time>
+            {{ hora_inicial }}
+            <b>&nbsp; HASTA: </b>
+            <time>{{ fecha_final | date : "dd-MM-yyyy" }} </time>
+            {{ hora_final }}
+          </p>
+          <br />
+        </ng-container>
+      </td>
+      <td style="text-align: center; font-size: 14px; color: #353535">
+        <p style="margin-bottom: 0px">
+          <b style="font-weight: bold">{{ sucursal.nombre }}</b
+          ><br />
+          NIT: {{ sucursal.nit }} <br />DIRECCIÓN: {{ sucursal.direccion }}
+        </p>
+      </td>
+    </tr>
+  </table>
+  <hr width="98%" />
+</ng-container>
+
+<table
+  style="
+    width: 100%;
+    border: 1px solid rgb(70, 69, 69);
+    border-collapse: collapse;
+    font-family: sans-serif;
+  "
+>
+  <thead>
+    <ng-container *ngIf="titleHeader">
+      <tr>
+        <th [attr.colspan]="colspanHeader">{{ titleHeader }}</th>
+      </tr>
+    </ng-container>
+    <tr
+      style="
+        border: 1px solid #000;
+        font-size: 14px;
+        background: rgb(231, 231, 231);
+        text-align: center;
+      "
+    >
+      <ng-container *ngFor="let header of headers">
+        <th [style]="header.style">
+          {{ header.nombre }}
+        </th>
+      </ng-container>
+    </tr>
+  </thead>
+  <tbody>
+    <ng-container *ngIf="data.length > 0; else nodataReport">
+      <tr
+        *ngFor="let item of data; let indice = index"
+        style="
+          height: 28px;
+          font-family: Tahoma, Helvetica, sans-serif;
+          font-size: 12px;
+        "
+      >
+        <ng-container *ngFor="let header of headers">
+          <td
+            scope="row"
+            *ngIf="header.nombre == 'Item'"
+            [style]="header.style"
+          >
+            {{ indice + 1 }}
+          </td>
+          <ng-container
+            *ngIf="header.nombre != 'Item' && header.number === undefined"
+          >
+            <td scope="row" [style]="header.style">
+              <ng-container
+                *ngIf="
+                  (historialVenta ||
+                    historialCompra ||
+                    estadoVenta ||
+                    creditoVenta ||
+                    creditoCompra) &&
+                  header.accesor === 'estado_id'
+                "
+              >
+                {{ item[header.accesor] | estadoCredito | uppercase }}
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  (historialVenta ||
+                    historialCompra ||
+                    estadoVenta ||
+                    creditoVenta ||
+                    creditoCompra) &&
+                  header.accesor !== 'estado_id'
+                "
+              >
+                {{ item[header.accesor] }}
+              </ng-container>
+              <ng-container
+                *ngIf="
+                  historialVenta === undefined &&
+                  historialCompra === undefined &&
+                  estadoVenta === undefined &&
+                  creditoVenta === undefined &&
+                  creditoCompra === undefined
+                "
+              >
+                {{ item[header.accesor] }}
+              </ng-container>
+            </td>
+          </ng-container>
+          <ng-container *ngIf="header.number === true">
+            <td scope="row" [style]="header.style">
+              {{ formatearNumber(item[header.accesor]) }}
+            </td>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-container>
+
+    <!-- En el caso que sea el reporte de inventario -->
+    <ng-container *ngIf="inventario">
+      <tr style="font-weight: 400; color: #000000; font-weight: bold">
+        <td
+          scope="row"
+          style="width: 80px; text-align: right; font-size: 14px"
+          colspan="7"
+        >
+          COSTO TOTAL INVENTARIO
+        </td>
+        <td scope="row" style="width: 80px; text-align: right; font-size: 14px">
+          {{ formatearNumber(total) }}
+        </td>
+      </tr>
+       <tr style="font-weight: 400; color: #000000; font-weight: bold">
+        <td
+          scope="row"
+          style="width: 80px; text-align: right; font-size: 14px"
+          colspan="7"
+        >
+          VENTA TOTAL INVENTARIO
+        </td>
+        <td scope="row" style="width: 80px; text-align: right; font-size: 14px">
+          {{ formatearNumber(total_venta) }}
+        </td>
+      </tr>
+    </ng-container>
+
+    <!-- Si es historial gasto -->
+    <ng-container *ngIf="historialGasto">
+      <tr style="font-weight: 400; color: #000000; font-weight: bold">
+        <td
+          scope="row"
+          style="width: 80px; text-align: right; font-size: 14px"
+          colspan="7"
+        >
+          TOTAL GASTOS
+        </td>
+        <td scope="row" style="width: 80px; text-align: right; font-size: 14px">
+          {{ formatearNumber(total) }}
+        </td>
+        <td colspan="3"></td>
+      </tr>
+    </ng-container>
+    <!-- Si es el historial de venta -->
+    <ng-container *ngIf="historialVenta">
+      <tr style="font-weight: bolder">
+        <td colspan="6"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          <!-- {{ formatearNumber(total.restanteTotal) }} -->
+        </td>
+      </tr>
+    </ng-container>
+    <!-- TOTAL BANCOS DETALLES -->
+    <ng-container *ngIf="bancoSeguimiento">
+      <tr style="font-weight: bolder">
+        <td colspan="5"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          <!-- {{ formatearNumber(total.restanteTotal) }} -->
+        </td>
+      </tr>
+    </ng-container>
+    <!-- Si es el estado de venta -->
+    <ng-container *ngIf="estadoVenta">
+      <tr style="font-weight: bolder">
+        <td class="text-center"></td>
+        <td colspan="5"></td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_propina) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.domicilio_total) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_bolsa) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_devoluciones) }}
+        </td>
+        <td
+        scope="row"
+        style="vertical-align: middle; text-align: right"
+      >
+        {{ formatearNumber(total.valor_total_nota_ajuste_credito) }}
+      </td>
+      <td
+      scope="row"
+      style="vertical-align: middle; text-align: right"
+    >
+      {{ formatearNumber(total.valor_total_nota_ajuste_debito) }}
+    </td>
+    <td
+    scope="row"
+    style="vertical-align: middle; text-align: right"
+  >
+    {{ formatearNumber(total.total_retencion) }}
+  </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_sin_extra) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total) }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="12"></td>
+        <td style="text-align: right; font-weight: bold;">Total</td>
+        <td style="text-align: right; font-weight: bold;">
+          {{ formatearNumber(total.valor_sin_extra_con_devolucion) }}
+        </td>
+        <td style="text-align: right; font-weight: bold;">
+          {{ formatearNumber(total.valor_total_con_devolucion) }}
+        </td>
+        <td></td>
+      </tr>
+
+    </ng-container>
+
+    <ng-container *ngIf="comisionVenta">
+      <tr style="font-weight: bolder" >
+        <td class="text-center"></td>
+        <td colspan="6"></td>
+      <td></td>
+        <td
+        scope="row"
+        style="vertical-align: middle; text-align: right"
+      >
+        {{ formatearNumber(total.total_comision) }}
+      </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_propina) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.domicilio_total) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_devoluciones) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{
+            formatearNumber(total.valor_total_nota_ajuste_credito)
+          }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{
+            formatearNumber(total.valor_total_nota_ajuste_debito)
+          }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total_sin_extra) }}
+        </td>
+        <td
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total) }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="12" style="text-align: right;">
+          <ng-container *ngIf="total.meta &&  total.valor_sin_extra_con_devolucion >= total.meta">
+            <label>
+              <div><b>META DE VENTAS:</b> {{formatearNumber(total.meta)}}</div>
+              <div> <b>TOTAL VENDIDO:</b> {{formatearNumber(total.valor_sin_extra_con_devolucion)}} </div>
+              <div><label style="color:rgb(4, 203, 107);font-weight: bold;">CUMPLIÓ LA META DE VENTAS</label></div></label>
+          </ng-container>
+          <ng-container *ngIf="total.meta &&  total.valor_sin_extra_con_devolucion < total.meta ">
+            <div><b>META DE VENTAS:</b> {{formatearNumber(total.meta)}} </div>
+            <div><b>TOTAL VENDIDO:</b> {{formatearNumber(total.valor_sin_extra_con_devolucion)}}</div>
+           <div> <label style="color:red;font-weight: bold;">META DE VENTA NO CUMPLIDA</label></div>
+          </ng-container>
+        </td>
+        <td></td>
+        <td style="text-align: right;font-weight: bolder">Devoluciones</td>
+        <td style="text-align: right;font-weight: bolder">
+          - {{ formatearNumber(total.total_devoluciones) }}
+        </td>
+        <td style="text-align: right;font-weight: bolder">
+          - {{ formatearNumber(total.total_devoluciones) }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr style="font-weight: bolder" *ngIf="this.page == 1">
+        <td colspan="13"></td>
+        <td style="text-align: right">Notas Créditos</td>
+        <td style="text-align: right">
+          -
+          {{
+            formatearNumber(
+              total.valor_total_nota_ajuste_credito_sin_cargos
+            )
+          }}
+        </td>
+        <td style="text-align: right">
+          -
+          {{
+            formatearNumber(total.valor_total_nota_ajuste_credito)
+          }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr style="font-weight: bolder" *ngIf="this.page == 1">
+        <td colspan="13"></td>
+        <td style="text-align: right">Notas débitos</td>
+        <td style="text-align: right">
+          {{
+            formatearNumber(total.valor_total_nota_ajuste_debito)
+          }}
+        </td>
+        <td style="text-align: right">
+          {{
+            formatearNumber(total.valor_total_nota_ajuste_debito)
+          }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr style="font-weight: bolder" *ngIf="this.page == 1">
+        <td colspan="13"></td>
+        <td style="text-align: right">Total</td>
+        <td style="text-align: right">
+          {{
+            formatearNumber(total.valor_sin_extra_con_devolucion)
+          }}
+        </td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.valor_total_con_devolucion) }}
+        </td>
+        <td colspan="2"></td>
+      </tr>
+      <tr style="font-weight: bolder" *ngIf="this.page == 1">
+        <td colspan="13"></td>
+        <td style="text-align: right">Total Comisión</td>
+        <td style="text-align: right">
+          {{
+            formatearNumber(total.total_comision)
+          }}
+        </td>
+        <td style="text-align: right">
+        </td>
+        <td colspan="2"></td>
+      </tr>
+    </ng-container>
+
+    <!-- Genero el pie de los metodos de pagos de abonos -->
+    <ng-container *ngIf="estadoVentaMetodoPago">
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right" colspan="2">Total</td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="text-align: right;">{{ formatearNumber(total.total_abono) }}</td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2">Total Retención</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.valor_retencion_total) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2">Total Serv. Voluntario</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.propinaGlobal) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2">Total Domicilio</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.domicilioGlobal) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2">Devoluciones</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.total_devolucion) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2" title="Notas crédito">Notas Créditos</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.valor_notas_creditos_total) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2" title="Notas débito">Notas débitos</td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.valor_notas_debito_total) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2" title="Notas débito">Total abonos de créditos</td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total_abono) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td style="text-align: right"  colspan="2">Valor total</td>
+        <td style="text-align: right">
+          {{ formatearNumber((total.valor_total - total.propinaGlobal - total.domicilioGlobal) + total.total_abono) }}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+  </ng-container>
+
+    <!-- Totales de mesas en el estado de ventas PIE -->
+    <ng-container *ngIf="estadoVentaMesa">
+      <tr style="font-weight: bolder">
+        <td style="text-align: right" colspan="2">Total</td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total_cortesia) }}
+        </td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total_propina) }}
+        </td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total_venta_sin_propina) }}
+        </td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.total_venta_con_propina) }}
+        </td>
+      </tr>
+      <tr style="font-weight: bolder">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="text-align: right">Devoluciones</td>
+        <td style="text-align: right">
+         - {{ formatearNumber(total.total_devolucion) }}
+        </td>
+        <td style="text-align: right">
+          -{{ formatearNumber(total.total_devolucion) }}
+        </td>
+      </tr>
+      <tr style="font-weight: bolder">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td style="text-align: right">Valor total</td>
+        <td style="text-align: right">
+          {{ formatearNumber(total.valor_total) }}
+        </td>
+        <td style="text-align: right">
+          {{formatearNumber(total.total_venta_con_propina_devolucion)}}
+        </td>
+      </tr>
+    </ng-container>
+
+    <!-- Si son creditos de ventas -->
+    <ng-container *ngIf="creditoVenta">
+      <tr style="font-weight: bolder">
+        <td colspan="6"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.restanteTotal) }}
+        </td>
+      </tr>
+    </ng-container>
+    <!-- creditos de compra -->
+    <ng-container *ngIf="creditoCompra">
+      <tr style="font-weight: bolder">
+        <td colspan="6"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.restanteTotal) }}
+        </td>
+      </tr>
+    </ng-container>
+
+    <!-- Si son creditos de clientes -->
+    <ng-container *ngIf="creditoClientes">
+      <tr>
+        <td scope="row" colspan="5"></td>
+        <td
+          scope="row"
+          style="font-weight: bolder; vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td
+          scope="row"
+          style="font-weight: bolder; vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.abonoTotal) }}
+        </td>
+        <td
+          scope="row"
+          style="font-weight: bolder; vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.restanteTotal) }}
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="historialAbono">
+      <tr>
+        <td
+          scope="row"
+          colspan="5"
+          style="text-align: right; font-weight: bold"
+        >
+          Total abonos
+        </td>
+        <td
+          scope="row"
+          style="font-weight: bolder; vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.total) }}
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="devoluciones">
+      <tr style="font-weight: bolder">
+        <td colspan="7"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total) }}
+        </td>
+      </tr>
+    </ng-container>
+    <ng-container *ngIf="devolucionNotaCredito">
+      <tr style="font-weight: bolder">
+        <td colspan="9"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total) }}
+        </td>
+      </tr>
+    </ng-container>
+
+    <ng-container *ngIf="utilidades">
+      <tr style="font-weight: bolder">
+        <td>TOTAL</td>
+        <td scope="row">--</td>
+        <td scope="row" style="text-align: center">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.descuento_total) }}</td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.devolucion_total) }}
+        </td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.debito_total) }}
+        </td>
+        <td scope="row" style="text-align: right">
+          - {{ formatearNumber(total.total_nota_credito_ajuste_precio) }}
+        </td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.total_nota_debito_ajuste_precio) }}
+        </td>
+         <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.total_retencion) }}
+        </td>
+        <td scope="row" style="text-align: right">{{ formatearNumber(total.cantidad_productos_vendidos) }}</td>
+
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.valor_compra_total) }}
+        </td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.valor_venta_total) }}
+        </td>
+        <td scope="row" style="text-align: right">
+          {{ formatearNumber(total.utilidad_total) }}
+        </td>
+        <td style="text-align: right">{{ formatearNumber(total.margen_utilidad) }} %</td>
+      </tr>
+
+      <tr>
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          <label  style="font-weight: bolder; margin-bottom: 0px;">TOTAL VENTAS</label>
+          <p style="font-size: 8px;padding: 0px;margin: 0px;">Incluye impuestos</p>
+        </td>
+        <td colspan="2" scope="row" style="vertical-align: middle; text-align: right;font-weight: bolder;">
+          {{ formatearNumber(total.valor_venta_total) }}
+        </td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder">
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          TOTAL COMPRA
+        </td>
+        <td
+          colspan="2"
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+        - {{ formatearNumber(total.valor_compra_total) }}
+        </td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder">
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          TOTAL GASTOS
+        </td>
+        <td
+          colspan="2"
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+         - {{ formatearNumber(total.gatos_total) }}
+        </td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder; font-size: 15;">
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          TOTAL UTILIDADES BRUTAS
+        </td>
+        <td
+          colspan="2"
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.utilidad_total_final) }}
+        </td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder;">
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          TOTAL IMPUESTOS
+        </td>
+        <td
+          colspan="2"
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          -{{ formatearNumber(total.impuesto_total) }}
+        </td>
+        <td></td>
+      </tr>
+      <tr style="font-weight: bolder; font-size: 15;">
+        <td colspan="12" style="vertical-align: middle; text-align: right">
+          TOTAL UTILIDADES NETAS
+        </td>
+        <td
+          colspan="2"
+          scope="row"
+          style="vertical-align: middle; text-align: right"
+        >
+          {{ formatearNumber(total.utilidad_total_final - total.impuesto_total) }}
+        </td>
+        <td></td>
+      </tr>
+    </ng-container>
+
+    <ng-container *ngIf="detalleVenta">
+      <tr style="font-weight: bolder">
+        <td>TOTAL</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valor_venta_total) }}
+        </td>
+      </tr>
+    </ng-container>
+
+    
+    <ng-container *ngIf="creditoClientesPdf">
+      <tr style="font-weight: bolder">
+        <td>TOTAL</td>
+        <td scope="row" style="text-align: right"></td>
+        <td scope="row" style="text-align: right"></td>
+        <td scope="row" style="text-align: right"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.abonoTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.pendienteTotal) }}
+        </td>
+      </tr>
+</ng-container>
+    <ng-container *ngIf="detalleCompra">
+      <tr style="font-weight: bolder">
+        <td>TOTAL</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="text-align: right">--</td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valor_venta_total) }}
+        </td>
+      </tr>
+    </ng-container>
+
+    <ng-container *ngIf="historialCompra">
+      <tr style="font-weight: bolder">
+        <td colspan="8"></td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          {{ formatearNumber(total.valorTotal) }}
+        </td>
+        <td scope="row" style="vertical-align: middle; text-align: right">
+          <!-- {{ formatearNumber(total.restanteTotal) }} -->
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
+
+<ng-container
+  *ngIf="!(estadoVenta || estadoVentaMetodoPago || estadoVentaMesa)"
+>
+  <div
+    style="
+      width: 100%;
+      background-color: #ffffff;
+      padding: 10px;
+      text-align: center;
+      font-size: 10px;
+    "
+  >
+    {{website}} - fecha de impresión: {{ sucursal.fecha }}
+  </div>
+</ng-container>
+<ng-template #nodataReport>
+  <tr>
+    <td
+      scope="row"
+      colspan="9"
+      class="text-muted"
+      style="vertical-align: middle"
+    >
+      <h5>No se encontraron registros</h5>
+    </td>
+  </tr>
+</ng-template>

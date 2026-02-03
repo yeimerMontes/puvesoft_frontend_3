@@ -1,0 +1,204 @@
+<div
+  [ngStyle]="{
+    background: 'url(' + backgroundImageLogin + ')',
+    'background-position': 'center center',
+    'background-attachment': 'fixed',
+    'background-repeat': 'no-repeat',
+    'background-size': 'cover',
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
+    top: '0',
+    right: '0',
+    bottom: '0',
+    left: '0'
+  }"
+></div>
+<main>
+  <div class="row h-100">
+    <div class="col-md-7 d-none d-md-block"></div>
+    <div class="col-md-5" style="margin-top: 100px">
+      <div
+        class="card auth-card mx-auto"
+        style="
+          max-width: 325px;
+          text-align: center;
+          border-radius: 10px;
+          box-shadow: rgb(1 1 1 / 27%) 1px 1px 13px 5px,
+            rgb(0 0 0 / 25%) 0px 1px 6px 0px;
+          margin-left: -50px;
+        "
+      >
+        <div
+          class="form-side"
+          style="padding: 40px 40px 40px 40px; width: 100%"
+        >
+          <a class="c-pointer">
+            <span class="logo-single"></span>
+          </a>
+          <form [formGroup]="form" (ngSubmit)="login()">
+            <img [src]="logoLoginUrl" width="135" style="margin-bottom: 10px" />
+            <label
+              class="form-group has-float-label"
+              style="margin-bottom: 0px"
+            >
+              <span style="color: #ffffff">Usuario</span>
+              <input
+                style="font-size: 16px; text-align: center; color: #383838"
+                class="form-control-login"
+                name="email"
+                formControlName="usuario"
+                placeholder="Usuario"
+              />
+              <div
+                *ngIf="campoEsValido('usuario')"
+                style="color: red; margin-bottom: 0px"
+              >
+                El usuario es requerido!
+              </div>
+            </label><br><br>
+            <label class="form-group has-float-label">
+              <span style="color: #ffffff">Usuario admin</span>
+              <input
+                style="font-size: 16px; text-align: center; color: #383838"
+                (keyup.enter)="login()"
+                required
+                class="form-control-login"
+                type="usuario_admin"
+                placeholder="Usuario Admin"
+                name="usuario_admin"
+                formControlName="usuario_admin"
+              />
+              <div *ngIf="campoEsValido('usuario_admin')" style="color: red">
+              El usuario admin es requerida!
+              </div>
+            </label>
+            <label class="form-group has-float-label">
+              <span style="color: #ffffff">Contraseña Admin</span>
+              <input
+                style="font-size: 16px; text-align: center; color: #383838"
+                (keyup.enter)="login()"
+                required
+                class="form-control-login"
+                type="password_admin"
+                placeholder="Contraseña Admin"
+                name="password_admin"
+                formControlName="password_admin"
+                type="password"
+              />
+              <div *ngIf="campoEsValido('password_admin')" style="color: red">
+                La contraseña admin es requerida!
+              </div>
+            </label>
+            <div class="d-flex justify-content-center align-items-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-shadow"
+                [disabled]="lockbutton"
+                style="width: 100%"
+                [ngClass]="{
+                  'conectapos-style': sitioWeb === 'www.conectapos.com'
+                }"
+                (click)="login()"
+              >
+                <span
+                  *ngIf="lockbutton"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Iniciar Sesión
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Botón flotante de WhatsApp -->
+<a
+  *ngIf="sitioWeb == 'www.puvesoft.co'"
+  href="https://wa.me/573014731355?
+	text=Hola%21%20Quisiera%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Puvesoft..."
+  target="_blank"
+  class="whatsapp-float"
+  aria-label="Iniciar chat"
+>
+  <i class="bi bi-whatsapp"></i>
+</a>
+
+<!-- Modal para gestionar recuperación de contraseña -->
+<div
+  class="modal fade"
+  bsModal
+  #staticModal="bs-modal"
+  [config]="{ backdrop: 'static' }"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="dialog-static-name"
+>
+  <div class="modal-dialog modal-lg" style="width: 350px">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #2c539e">
+        <h5
+          id="dialog-static-name"
+          class="modal-title pull-left"
+          style="color: aliceblue"
+        >
+          Recuperar Contraseña
+        </h5>
+        <button
+          type="button"
+          class="close pull-right"
+          aria-label="Close"
+          (click)="closeModal()"
+        >
+          <span aria-hidden="true" style="color: aliceblue">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="formPassword" (ngSubmit)="recuperarPasword()">
+          <div class="row">
+            <div class="form-group col-md-12 text-center">
+              <label for="" style="font-weight: bold; text-align: center"
+                >Correo Electrónico</label
+              >
+              <input
+                class="form-control rounded text-center"
+                placeholder="Ej: correo@gmail.com"
+                formControlName="email"
+              />
+              <div
+                *ngIf="campoEsValido2('email')"
+                class="alert-danger px-2 rounded"
+                style="background: rgba(3, 0, 0, 0)"
+              >
+                *El correo es requerido
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end align-items-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-shadow"
+              [disabled]="lockbuttonRecuperar"
+              style="width: 100%"
+              (click)="recuperarPasword()"
+            >
+              <span
+                *ngIf="lockbuttonRecuperar"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              Enviar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
