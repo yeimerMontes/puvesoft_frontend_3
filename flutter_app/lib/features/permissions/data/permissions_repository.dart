@@ -1,6 +1,13 @@
+import '../../../core/network/api_client.dart';
+import '../../../core/network/api_endpoints.dart';
+import '../../../core/network/api_result.dart';
+
 class PermissionsRepository {
-  Future<List<String>> fetchPermissions() async {
-    // TODO: GET /mispermisos
-    return [];
+  PermissionsRepository(this._client);
+
+  final ApiClient _client;
+
+  Future<ApiResult<List<dynamic>>> fetchPermissions() {
+    return _client.get(ApiEndpoints.permissions);
   }
 }
