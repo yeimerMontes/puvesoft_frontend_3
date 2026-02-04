@@ -8,21 +8,11 @@ class SyncService {
   Future<void> syncPending() async {
     final items = await _queueRepository.pendingItems();
     for (final item in items) {
-      try {
-        final success = await _dispatch(item);
-        if (success) {
-          await _queueRepository.markCompleted(item.id);
-        } else {
-          await _queueRepository.markFailed(item.id);
-        }
-      } catch (_) {
-        await _queueRepository.markFailed(item.id);
+      if (item.status != SyncQueueStatus.pending) {
+        continue;
       }
+      // TODO: send item to server based on type
+      await _queueRepository.markCompleted(item.id);
     }
-  }
-
-  Future<bool> _dispatch(SyncQueueItem item) async {
-    // TODO: route item to correct repository based on type.
-    return true;
   }
 }

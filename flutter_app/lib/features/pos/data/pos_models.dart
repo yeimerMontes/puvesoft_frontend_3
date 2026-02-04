@@ -13,13 +13,3 @@ class PosSalePayload {
 
   final Map<String, dynamic> payload;
 }
-
-class PosSaleResult {
-  PosSaleResult({
-    required this.saleId,
-    required this.status,
-  });
-
-  final String saleId;
-  final String status;
-}

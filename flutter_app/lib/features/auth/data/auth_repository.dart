@@ -1,45 +1,30 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/network/api_result.dart';
-import 'auth_models.dart';
 
 class AuthRepository {
   AuthRepository(this._client);
 
   final ApiClient _client;
 
-  Future<ApiResult<AuthTokens>> login({
+  Future<ApiResult<Map<String, dynamic>>> login({
     required String username,
     required String password,
-  }) async {
-    final result = await _client.post(ApiEndpoints.authLogin, body: {
+  }) {
+    return _client.post(ApiEndpoints.authLogin, body: {
       'username': username,
       'password': password,
     });
-    if (result.isSuccess) {
-      final data = result.data ?? {};
-      final token = data['token']?.toString() ?? '';
-      final refreshToken = data['refresh_token']?.toString();
-      return ApiResult.success(AuthTokens(token: token, refreshToken: refreshToken));
-    }
-    return ApiResult.failure(result.error ?? ApiError(message: 'Unknown error'));
   }
 
-  Future<ApiResult<AuthTokens>> loginAdmin({
+  Future<ApiResult<Map<String, dynamic>>> loginAdmin({
     required String username,
     required String password,
-  }) async {
-    final result = await _client.post(ApiEndpoints.authLoginAdmin, body: {
+  }) {
+    return _client.post(ApiEndpoints.authLoginAdmin, body: {
       'username': username,
       'password': password,
     });
-    if (result.isSuccess) {
-      final data = result.data ?? {};
-      final token = data['token']?.toString() ?? '';
-      final refreshToken = data['refresh_token']?.toString();
-      return ApiResult.success(AuthTokens(token: token, refreshToken: refreshToken));
-    }
-    return ApiResult.failure(result.error ?? ApiError(message: 'Unknown error'));
   }
 
   Future<ApiResult<void>> logout() {

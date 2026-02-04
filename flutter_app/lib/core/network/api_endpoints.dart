@@ -11,16 +11,4 @@ class ApiEndpoints {
   static const String cartDetail = '/detalleCarritoVenta';
   static const String changeAlias = '/changeAlias';
   static const String saveNote = '/saveNote';
-
-  static const String cashboxOpen = '/cierreCaja';
-  static const String cashboxClose = '/cerrarCaja';
-  static const String cashboxHistory = '/cierreCaja';
-  static const String cashboxStatus = '/estadoCaja';
-
-  static const String products = '/productos';
-  static const String productsActiveSearch = '/busquedaPorNombreProductosActivas';
-
-  static const String customers = '/clientes';
-  static const String customerSearch = '/buscarCliente';
-  static const String customerSearchDocument = '/buscarClienteDocumento';
 }
