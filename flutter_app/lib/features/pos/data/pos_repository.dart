@@ -16,6 +16,37 @@ class PosRepository {
     return _client.post(ApiEndpoints.cartSales, body: payload.payload);
   }
 
+  Future<ApiResult<List<dynamic>>> fetchCartItems() {
+    return _client.get(ApiEndpoints.cartSales);
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> fetchCartDetail(String cartId) {
+    return _client.get(
+      ApiEndpoints.cartDetail,
+      query: {'carrito_venta': cartId},
+    );
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> updateCartAlias({
+    required String cartId,
+    required String alias,
+  }) {
+    return _client.get(
+      '${ApiEndpoints.changeAlias}/$cartId',
+      query: {'alias': alias},
+    );
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> saveCartNote({
+    required String cartId,
+    required String note,
+  }) {
+    return _client.get(
+      '${ApiEndpoints.saveNote}/$cartId',
+      query: {'nota': note},
+    );
+  }
+
   Future<ApiResult<void>> deleteCartItem(String cartId) {
     return _client.delete('${ApiEndpoints.cartSales}/$cartId');
   }
