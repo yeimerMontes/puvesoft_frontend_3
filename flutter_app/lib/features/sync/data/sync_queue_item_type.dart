@@ -1,0 +1,37 @@
+enum SyncQueueItemType {
+  unknown,
+  saleCreate,
+  cartUpdate,
+  cashboxOpen,
+  cashboxClose,
+}
+
+extension SyncQueueItemTypeX on SyncQueueItemType {
+  static SyncQueueItemType fromValue(String value) {
+    for (final type in SyncQueueItemType.values) {
+      if (type.name == value || type.key == value) {
+        return type;
+      }
+    }
+    return SyncQueueItemType.unknown;
+  }
+
+  String get key {
+    switch (this) {
+      case SyncQueueItemType.unknown:
+        return 'unknown';
+      case SyncQueueItemType.saleCreate:
+        return 'sale:create';
+      case SyncQueueItemType.cartUpdate:
+        return 'cart:update';
+      case SyncQueueItemType.cashboxOpen:
+        return 'cashbox:open';
+      case SyncQueueItemType.cashboxClose:
+        return 'cashbox:close';
+    }
+  }
+
+  bool get isKnown {
+    return this != SyncQueueItemType.unknown;
+  }
+}
